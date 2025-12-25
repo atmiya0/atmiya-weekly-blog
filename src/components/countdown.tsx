@@ -48,14 +48,14 @@ export function Countdown() {
   // Render placeholder during SSR and initial hydration
   if (!mounted || !timeRemaining) {
     return (
-      <p className="text-[14px] leading-[1.5714285714285714em] font-normal tabular-nums">
+      <p className="text-body tabular-nums">
         --:--:--:-- (till 2031)
       </p>
     );
   }
 
   return (
-    <p className="text-[14px] leading-[1.5714285714285714em] font-normal tabular-nums" suppressHydrationWarning>
+    <p className="text-body tabular-nums" suppressHydrationWarning>
       {timeRemaining.days}:{formatTime(timeRemaining.hours)}:{formatTime(timeRemaining.minutes)}:{formatTime(timeRemaining.seconds)} (till 2031)
     </p>
   );

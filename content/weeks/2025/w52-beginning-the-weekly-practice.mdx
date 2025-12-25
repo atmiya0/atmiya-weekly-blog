@@ -1,42 +1,156 @@
 ---
-title: "Beginning the Weekly Practice"
+title: "How to Write Blogs"
 week: 52
 startDate: "2025-12-22"
 endDate: "2025-12-28"
-summary: "The first week of documenting thoughts, progress, and learnings. A commitment to consistency over perfection."
-slug: "beginning-the-weekly-practice"
+summary: "A guide on how to write and publish blog posts on this weekly blog."
+slug: "how-to-write-blogs"
 ---
 
-This is the beginning. Not the beginning of work or learning or building—those have been happening for a while now. This is the beginning of *writing it down*.
+This is a guide on how to write and publish blog posts on this weekly blog. Follow these guidelines to maintain consistency and quality.
 
-## Why Weekly?
+## Getting Started
 
-Weekly feels right. Daily is too noisy, monthly too sparse. A week is long enough to accumulate meaningful observations but short enough to remember the details.
+### File Location
 
-The goal isn't to create content. It's to create a record. A trail of breadcrumbs that future-me can follow back when wondering how things were decided, what was tried, and what was learned.
+All blog posts are stored in `content/weeks/` organized by year:
 
-## The Rules
+```
+content/weeks/
+├── 2025/
+│   └── w52-your-post-slug.mdx
+└── 2026/
+    └── w01-your-post-slug.mdx
+```
 
-Simple rules for a sustainable practice:
+### File Naming Convention
 
-1. **One post per week.** No more, no less. Consistency over volume.
-2. **Write for clarity.** Not for audience or SEO. Just clear thinking.
-3. **Ship imperfect.** Better published and flawed than perfect and unpublished.
-4. **No metrics.** No analytics dashboards to check. No engagement to chase.
+**Format:** `w{week}-{slug}.mdx`
 
-## This Week
+- `w` followed by the week number (2 digits preferred)
+- Hyphen separator
+- URL-friendly slug (lowercase, hyphens instead of spaces)
 
-This week was about setting up infrastructure. The blog itself. Static, simple, boring. Next.js with MDX because that's the stack I know and trust. No database, no CMS, no authentication. Just files.
+**Examples:**
+- `w52-how-to-write-blogs.mdx`
+- `w01-new-year-reflections.mdx`
+- `w15-project-update.mdx`
 
-The technical decisions were intentional:
+## Frontmatter
 
-- **Static generation** for speed and simplicity
-- **MDX** for writing that can include code when needed
-- **Minimal design** because the words should be the focus
-- **Dark mode** because it's 2025 and light-only is hostile
+Every blog post must start with YAML frontmatter:
 
-## Looking Ahead
+```yaml
+---
+title: "Your Blog Title"
+week: 52
+startDate: "2025-12-22"
+endDate: "2025-12-28"
+summary: "A brief description of your post."
+slug: "your-blog-slug"
+---
+```
 
-Next week will likely be about the actual work. The projects. The problems. For now, the system exists. That's enough.
+### Required Fields
 
-One week at a time.
+| Field | Description | Example |
+|-------|-------------|---------|
+| `title` | Display title of your post | `"Weekly Reflections"` |
+| `startDate` | Monday of the week (YYYY-MM-DD) | `"2025-12-22"` |
+| `endDate` | Sunday of the week (YYYY-MM-DD) | `"2025-12-28"` |
+| `summary` | Brief description for SEO | `"What I learned this week."` |
+| `slug` | URL-friendly identifier | `"weekly-reflections"` |
+| `week` | Week number (for reference) | `52` |
+
+### Date Rules
+
+The system enforces strict date validation:
+
+1. **startDate must be a Monday**
+2. **endDate must be a Sunday**
+3. **Duration must be exactly 6 days** (Monday to Sunday)
+
+If dates are invalid, you'll see warnings in the terminal during development.
+
+## Writing Content
+
+### Markdown Basics
+
+Use standard Markdown for content:
+
+```markdown
+## Section Heading
+
+Regular paragraph text.
+
+### Subsection
+
+- Bullet point 1
+- Bullet point 2
+
+1. Numbered item
+2. Another item
+
+**Bold text** and *italic text*.
+
+[Link text](https://example.com)
+```
+
+### Code Blocks
+
+For code examples:
+
+````markdown
+```javascript
+const greeting = "Hello, world!";
+console.log(greeting);
+```
+````
+
+### Images
+
+Place images in `public/` and reference them:
+
+```markdown
+![Alt text](/your-image.png)
+```
+
+## Style Guidelines
+
+### Writing Tone
+
+- **Clear and direct** — No fluff
+- **Personal but professional** — Write for yourself, but as if someone is reading
+- **Honest** — Document failures as well as successes
+
+### Structure
+
+1. **Start with context** — What is this week about?
+2. **Main content** — Details, learnings, progress
+3. **Reflection** — What worked? What didn't?
+4. **Looking ahead** — What's next?
+
+### Length
+
+- No strict limits, but aim for quality over quantity
+- A few hundred words is perfectly fine
+- Don't pad content unnecessarily
+
+## Publishing
+
+1. Create your `.mdx` file in the appropriate year folder
+2. Ensure frontmatter is correct
+3. Save the file
+4. The site automatically rebuilds (in development) or on next deploy
+
+## Tips
+
+- **Write weekly** — Consistency matters more than perfection
+- **Ship imperfect** — Better published than perfect in drafts
+- **Be specific** — Details are what make posts valuable
+- **Use headings** — Break up content for readability
+- **Keep slugs short** — They appear in URLs
+
+---
+
+This guide will be updated as the blog evolves.

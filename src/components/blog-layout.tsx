@@ -8,13 +8,13 @@ interface BlogLayoutProps {
 
 export function BlogLayout({ children }: BlogLayoutProps) {
     return (
-        <div className="min-h-screen text-[#0A0A0A]">
+        <div className="min-h-screen text-[var(--foreground)]">
             {/* Two Column Layout Container */}
             <div className="flex flex-col lg:flex-row lg:h-screen">
                 {/* Left Column - Fixed on desktop, normal flow on mobile */}
-                <aside className="bg-[#FAFAFA] lg:fixed lg:left-0 lg:top-0 lg:h-screen lg:w-[400px] xl:w-[450px] flex-shrink-0 p-6 pt-12 lg:p-12 lg:pt-[53px] lg:pl-[64px]">
+                <aside className="bg-[var(--background)] lg:fixed lg:left-0 lg:top-0 lg:h-screen lg:w-[400px] xl:w-[450px] flex-shrink-0 p-6 pt-12 lg:p-12 lg:pt-[53px] lg:pl-[64px]">
                     <header className="flex items-center gap-4">
-                        <Link href="/" className="w-12 h-12 rounded-full border border-[rgba(214,211,209,0.5)] overflow-hidden flex-shrink-0">
+                        <Link href="/" className="w-12 h-12 rounded-full border border-[var(--divider)] overflow-hidden flex-shrink-0">
                             <Image
                                 src="/atmiya.png"
                                 alt="Atmiya Jadvani"
@@ -24,7 +24,7 @@ export function BlogLayout({ children }: BlogLayoutProps) {
                             />
                         </Link>
                         <div className="flex flex-col">
-                            <Link href="/" className="text-[14px] leading-[1.5714285714285714em] font-normal hover:opacity-70 transition-opacity">
+                            <Link href="/" className="text-[14px] leading-[1.5714285714285714em] font-normal hover:text-[var(--brand)] transition-colors">
                                 Atmiya Jadvani
                             </Link>
                             <p className="text-[14px] leading-[1.5714285714285714em] font-normal">

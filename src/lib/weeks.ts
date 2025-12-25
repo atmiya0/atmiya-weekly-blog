@@ -113,8 +113,41 @@ export function getAllWeeks(): WeekPost[] {
         }
     }
 
-    // Sort by startDate in descending order (most recent first)
-    return allWeeks.sort((a, b) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime());
+    // Sort by startDate in ascending order for overlap validation
+    const sortedWeeks = allWeeks.sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime());
+
+    // Validate no overlapping or duplicate weeks (in development)
+    if (process.env.NODE_ENV === "development" && sortedWeeks.length > 1) {
+        for (let i = 1; i < sortedWeeks.length; i++) {
+            const prevWeek = sortedWeeks[i - 1];
+            const currWeek = sortedWeeks[i];
+
+            const prevEnd = new Date(prevWeek.endDate).getTime();
+            const currStart = new Date(currWeek.startDate).getTime();
+            const oneDayMs = 24 * 60 * 60 * 1000;
+
+            // Check if weeks overlap or have gaps (unless they're the same week with multiple posts)
+            if (prevWeek.startDate !== currWeek.startDate) {
+                if (currStart <= prevEnd) {
+                    console.warn(`\n⚠️  Week overlap detected:`);
+                    console.warn(`   - "${prevWeek.title}" ends on ${prevWeek.endDate}`);
+                    console.warn(`   - "${currWeek.title}" starts on ${currWeek.startDate}`);
+                    console.warn(`   - Next week should start the day after previous week ends\n`);
+                } else if (currStart !== prevEnd + oneDayMs) {
+                    // Optional: warn about gaps between weeks
+                    const gapDays = Math.floor((currStart - prevEnd) / oneDayMs) - 1;
+                    if (gapDays > 0) {
+                        console.warn(`\n⚠️  Gap of ${gapDays} day(s) between weeks:`);
+                        console.warn(`   - "${prevWeek.title}" ends on ${prevWeek.endDate}`);
+                        console.warn(`   - "${currWeek.title}" starts on ${currWeek.startDate}\n`);
+                    }
+                }
+            }
+        }
+    }
+
+    // Return sorted by startDate descending (most recent first)
+    return sortedWeeks.reverse();
 }
 
 export function getWeekBySlug(slug: string): WeekPost | undefined {

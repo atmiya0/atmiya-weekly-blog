@@ -64,7 +64,7 @@ export default async function WeekPage({ params }: PageProps) {
                     <div className="flex flex-col gap-[13px]">
                         <Link
                             href="/"
-                            className="inline-flex items-center gap-2 text-[14px] leading-[1.5714285714285714em] font-normal group mb-[24px]"
+                            className="inline-flex items-center gap-2 text-body group mb-[24px]"
                         >
                             <Image
                                 src="/left-arrow.svg"
@@ -73,7 +73,7 @@ export default async function WeekPage({ params }: PageProps) {
                                 height={18}
                                 className="opacity-60 group-hover:opacity-100 transition-opacity"
                             />
-                            <span className="group-hover:opacity-70 transition-opacity">Back to Home</span>
+                            <span className="group-hover:text-[var(--brand)] transition-colors">Back to Home</span>
                         </Link>
                         <p className="text-[14px] leading-[1.5714285714285714em] font-normal">
                             Week {week.week} = {formatDateRange(week.startDate, week.endDate)}

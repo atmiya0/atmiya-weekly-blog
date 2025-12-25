@@ -81,6 +81,9 @@ export default function HomePage() {
             </a>
             .
           </p>
+          <p className="text-[14px] leading-[1.5714285714285714em] font-normal">
+            I'm open to full-time roles in Toronto — frontend engineer, design engineer, or similar.
+          </p>
         </div>
       </section>
 

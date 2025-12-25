@@ -1,7 +1,6 @@
-# https://www.robotstxt.org/robotstxt.html
-
 User-agent: *
 Allow: /
+Disallow: /week/
 
 # Sitemap location
 Sitemap: https://blogs.atmiya.ca/sitemap.xml

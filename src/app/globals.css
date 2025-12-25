@@ -205,8 +205,12 @@ button,
     overflow-x: hidden;
   }
 
-  /* Better touch targets on mobile */
-  a,
+  /* Better touch scrolling on mobile */
+  body {
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Better touch targets for standalone buttons only */
   button,
   [role="button"] {
     min-height: 44px;
