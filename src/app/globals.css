@@ -2,29 +2,31 @@
 
 :root {
   --background: #FAFAFA;
-  --foreground: #1C1917;
+  --foreground: #0A0A0A;
+  --brand: #ff4800;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #FAFAFA;
-    --foreground: #1C1917;
+    --foreground: #0A0A0A;
   }
 }
 
 .dark {
   --background: #FAFAFA;
-  --foreground: #1C1917;
+  --foreground: #0A0A0A;
 }
 
 .light {
   --background: #FAFAFA;
-  --foreground: #1C1917;
+  --foreground: #0A0A0A;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-brand: var(--brand);
   --font-family-brunswick: var(--font-brunswick), system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
@@ -34,6 +36,8 @@ html {
   -moz-osx-font-smoothing: grayscale;
   /* Prevent text resizing unexpectedly in landscape mode on iOS */
   -webkit-text-size-adjust: 100%;
+  /* Smooth scroll padding */
+  scroll-padding-top: 2rem;
 }
 
 body {
@@ -80,21 +84,12 @@ img {
   font-feature-settings: "ss01" off, "ss02" off, "ss03" off, "ss04" off, "ss05" off, "calt" off;
 }
 
-/* Interactive elements should disable user-select for inner content */
+/* Interactive elements styling */
 a,
 button,
 [role="button"],
 [tabindex] {
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
-  user-select: none;
-}
-
-/* But allow text selection within links and buttons */
-a *,
-button *,
-[role="button"] *,
-[tabindex] * {
-  user-select: text;
 }
 
 /* Ensure transitions are fast (≤200ms) for interactive elements */
@@ -109,4 +104,78 @@ button,
 /* Tabular figures for numbers to prevent layout shift */
 .tabular-nums {
   font-variant-numeric: tabular-nums;
+}
+
+/* Mobile responsiveness improvements */
+@media (max-width: 640px) {
+
+  /* Prevent horizontal scroll on mobile */
+  html,
+  body {
+    overflow-x: hidden;
+  }
+
+  /* Better touch targets on mobile */
+  a,
+  button,
+  [role="button"] {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+  }
+}
+
+/* Prevent content from overflowing on mobile */
+* {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+/* Code blocks should scroll horizontally, not wrap */
+pre,
+code {
+  word-wrap: normal;
+  overflow-wrap: normal;
+}
+
+/* Allow native browser swipe navigation */
+html {
+  overscroll-behavior-y: none;
+  overscroll-behavior-x: auto;
+}
+
+/* Fix iOS safe area for notched devices */
+@supports (padding: max(0px)) {
+  body {
+    padding-left: max(0px, env(safe-area-inset-left));
+    padding-right: max(0px, env(safe-area-inset-right));
+  }
+}
+
+/* Momentum scrolling for touch devices */
+main {
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Smoother scrolling container */
+.overflow-y-auto {
+  scrollbar-width: thin;
+  scrollbar-color: #E7E7E7 transparent;
+}
+
+.overflow-y-auto::-webkit-scrollbar {
+  width: 6px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.overflow-y-auto::-webkit-scrollbar-thumb {
+  background-color: #E7E7E7;
+  border-radius: 3px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-thumb:hover {
+  background-color: #D4D4D4;
 }

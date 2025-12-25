@@ -6,27 +6,48 @@ import "./globals.css";
 export const metadata: Metadata = {
   metadataBase: new URL("https://blogs.atmiya.ca"),
   title: {
-    default: "Weekly | Atmiya Jadvani",
-    template: "%s | Weekly",
+    default: "Atmiya's Blog",
+    template: "%s | Atmiya's Blog",
   },
   description:
-    "A weekly journal documenting thoughts, progress, and learnings. One week at a time.",
+    "Personal blog by Atmiya Jadvani. Documenting my weeks — what I'm building, learning, and thinking about in design, product, and engineering.",
+  keywords: [
+    "Atmiya Jadvani",
+    "blog",
+    "design",
+    "product",
+    "engineering",
+    "weekly journal",
+    "tech blog",
+    "product design",
+    "frontend engineering",
+  ],
   authors: [{ name: "Atmiya Jadvani", url: "https://atmiya.ca" }],
   creator: "Atmiya Jadvani",
+  publisher: "Atmiya Jadvani",
+  icons: {
+    icon: [
+      { url: "/favicon.svg", type: "image/svg+xml" },
+    ],
+    shortcut: "/favicon.svg",
+    apple: "/favicon.svg",
+  },
   openGraph: {
     type: "website",
     locale: "en_US",
     url: "https://blogs.atmiya.ca",
-    siteName: "Weekly",
-    title: "Weekly | Atmiya Jadvani",
+    siteName: "Atmiya's Blog",
+    title: "Atmiya's Blog | Atmiya Jadvani",
     description:
-      "A weekly journal documenting thoughts, progress, and learnings. One week at a time.",
+      "Documenting my weeks — what I'm building, learning, and thinking about in design, product, and engineering.",
   },
   twitter: {
     card: "summary",
-    title: "Weekly | Atmiya Jadvani",
+    site: "@atmiyajadvani",
+    creator: "@atmiyajadvani",
+    title: "Atmiya's Blog | Atmiya Jadvani",
     description:
-      "A weekly journal documenting thoughts, progress, and learnings. One week at a time.",
+      "Documenting my weeks — what I'm building, learning, and thinking about in design, product, and engineering.",
   },
   alternates: {
     canonical: "https://blogs.atmiya.ca",
@@ -37,6 +58,13 @@ export const metadata: Metadata = {
   robots: {
     index: true,
     follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
   },
 };
 

@@ -13,7 +13,7 @@ export function getAllWeeks(): WeekPost[] {
 
     const fileNames = fs.readdirSync(contentDirectory);
     const allWeeks = fileNames
-        .filter((fileName) => fileName.endsWith(".mdx"))
+        .filter((fileName) => fileName.endsWith(".mdx") && !fileName.startsWith("_"))
         .map((fileName) => {
             const fullPath = path.join(contentDirectory, fileName);
             const fileContents = fs.readFileSync(fullPath, "utf8");
@@ -33,8 +33,8 @@ export function getAllWeeks(): WeekPost[] {
             };
         });
 
-    // Sort by week number in descending order (most recent first)
-    return allWeeks.sort((a, b) => b.week - a.week);
+    // Sort by startDate in descending order (most recent first)
+    return allWeeks.sort((a, b) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime());
 }
 
 export function getWeekBySlug(slug: string): WeekPost | undefined {
@@ -42,18 +42,23 @@ export function getWeekBySlug(slug: string): WeekPost | undefined {
     return allWeeks.find((week) => week.slug === slug);
 }
 
-export function getAdjacentWeeks(currentWeek: number): {
+export function getAdjacentPosts(currentSlug: string): {
     previous: WeekPost | undefined;
     next: WeekPost | undefined;
 } {
     const allWeeks = getAllWeeks();
-    const sortedByWeek = [...allWeeks].sort((a, b) => a.week - b.week);
+    // Sort by startDate ascending (oldest first), then by slug for same-date posts
+    const sortedPosts = [...allWeeks].sort((a, b) => {
+        const dateCompare = new Date(a.startDate).getTime() - new Date(b.startDate).getTime();
+        if (dateCompare !== 0) return dateCompare;
+        return a.slug.localeCompare(b.slug);
+    });
 
-    const currentIndex = sortedByWeek.findIndex((week) => week.week === currentWeek);
+    const currentIndex = sortedPosts.findIndex((post) => post.slug === currentSlug);
 
     return {
-        previous: currentIndex > 0 ? sortedByWeek[currentIndex - 1] : undefined,
-        next: currentIndex < sortedByWeek.length - 1 ? sortedByWeek[currentIndex + 1] : undefined,
+        previous: currentIndex > 0 ? sortedPosts[currentIndex - 1] : undefined,
+        next: currentIndex < sortedPosts.length - 1 ? sortedPosts[currentIndex + 1] : undefined,
     };
 }
 

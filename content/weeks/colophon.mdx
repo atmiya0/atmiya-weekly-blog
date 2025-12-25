@@ -1,0 +1,132 @@
+---
+title: "Colophon"
+week: 52
+startDate: "2025-12-22"
+endDate: "2025-12-28"
+summary: "A detailed look at the technology, design decisions, and tools used to build this weekly blog."
+slug: "colophon"
+---
+
+This is the colophon—a detailed documentation of everything used to build this blog. Consider it a reference for future self and anyone curious about the technical decisions behind this space.
+
+## Technology Stack
+
+### Framework & Runtime
+
+- **Next.js 16.1.1** — React framework with App Router for static site generation
+- **React 19.2.3** — Latest React with the new React Compiler
+- **TypeScript 5** — Strict type checking throughout the codebase
+
+### Content Management
+
+- **MDX** — Markdown with JSX support for writing posts
+- **@mdx-js/loader & @mdx-js/react** — MDX processing and React integration
+- **gray-matter** — YAML frontmatter parsing for post metadata
+- **reading-time** — Automatic reading time calculation
+
+### Styling
+
+- **Tailwind CSS 4** — Utility-first CSS framework
+- **@tailwindcss/postcss** — PostCSS integration for Tailwind
+
+### Typography
+
+- **Brunswick Grotesque** — Custom font loaded via `next/font/local`
+- Regular weight only, no stylistic sets enabled
+- 14px base size with 1.571em line height
+
+### Development Tools
+
+- **ESLint 9** with Next.js config — Code linting
+- **Prettier 3** — Code formatting
+- **babel-plugin-react-compiler** — React Compiler for automatic optimizations
+
+## Design Decisions
+
+### Layout
+
+The blog uses a **two-column layout** on desktop:
+
+- **Left column** (fixed): Profile information, stays in place while scrolling
+- **Right column** (scrollable): Main content area
+
+On mobile, the layout collapses to a single column with the header at the top.
+
+### Colors
+
+A minimal, two-tone palette:
+
+- **Left sidebar**: `#FAFAFA` (warm off-white)
+- **Right content**: `#FFFFFF` (pure white)
+- **Text**: `#1C1917` (warm black)
+- **Dividers**: `#E7E7E7` (light gray)
+
+### Typography Philosophy
+
+Single font, single weight, single size. The lack of visual hierarchy through typography forces clarity in writing. Structure comes from content, not from bold headings or varied sizes.
+
+## File Structure
+
+```
+content/
+  weeks/           # MDX blog posts
+    week-01.mdx
+    colophon.mdx
+src/
+  app/
+    page.tsx       # Home page
+    layout.tsx     # Root layout
+    globals.css    # Global styles
+    week/
+      [slug]/
+        page.tsx   # Individual post pages
+  components/
+    blog-layout.tsx    # Shared two-column layout
+    countdown.tsx      # Countdown timer
+    mdx-content.tsx    # MDX renderer
+    week-navigation.tsx # Previous/next navigation
+  lib/
+    weeks.ts       # Post loading utilities
+    dates.ts       # Date formatting helpers
+  styles/
+    typography.ts  # Font configuration
+```
+
+## Hosting & Deployment
+
+- **Vercel** — Automatic deployments from GitHub
+- **Domain**: blogs.atmiya.ca
+- **Static export** — No server required at runtime
+
+## What's Intentionally Not Here
+
+- No analytics or tracking
+- No comments system
+- No newsletter signup
+- No social share buttons
+- No database or CMS
+- No authentication
+- No dark mode (yet)
+
+The focus is on writing and reading. Everything else is noise.
+
+## Dependencies Summary
+
+**Production:**
+- next, react, react-dom
+- @mdx-js/loader, @mdx-js/react, @next/mdx
+- date-fns, gray-matter, reading-time
+- next-themes (for future dark mode)
+
+**Development:**
+- tailwindcss, @tailwindcss/postcss
+- typescript, eslint, prettier
+- Various type definitions
+
+## Performance
+
+Static generation means every page is pre-rendered at build time. No JavaScript required for the initial content render. The entire site is just HTML, CSS, and minimal JS for interactivity.
+
+---
+
+This colophon will be updated as the blog evolves.

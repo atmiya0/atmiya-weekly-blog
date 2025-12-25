@@ -9,26 +9,26 @@ interface MDXContentProps {
 // Define MDX components inline to avoid hook issues in async component
 const components: MDXComponents = {
     h1: ({ children }) => (
-        <h1 className="text-[14px] leading-[1.5714285714285714em] font-normal mt-[13px] mb-[13px] text-[#1C1917]">{children}</h1>
+        <h1 className="text-[14px] leading-[1.5714285714285714em] font-normal mt-[13px] mb-[13px] text-[#0A0A0A]">{children}</h1>
     ),
     h2: ({ children }) => (
-        <h2 className="text-[14px] leading-[1.5714285714285714em] font-normal mt-[13px] mb-[13px] text-[#1C1917]">{children}</h2>
+        <h2 className="text-[14px] leading-[1.5714285714285714em] font-normal mt-[13px] mb-[13px] text-[#0A0A0A]">{children}</h2>
     ),
     h3: ({ children }) => (
-        <h3 className="text-[14px] leading-[1.5714285714285714em] font-normal mt-[13px] mb-[13px] text-[#1C1917]">{children}</h3>
+        <h3 className="text-[14px] leading-[1.5714285714285714em] font-normal mt-[13px] mb-[13px] text-[#0A0A0A]">{children}</h3>
     ),
     p: ({ children }) => (
-        <p className="text-[14px] leading-[1.5714285714285714em] font-normal mb-[13px] text-[#1C1917]">{children}</p>
+        <p className="text-[14px] leading-[1.5714285714285714em] font-normal mb-[13px] text-[#0A0A0A]">{children}</p>
     ),
     ul: ({ children }) => (
-        <ul className="list-disc list-inside mb-[13px] space-y-[13px] text-[#1C1917]">{children}</ul>
+        <ul className="list-disc list-inside mb-[13px] space-y-[13px] text-[#0A0A0A]">{children}</ul>
     ),
     ol: ({ children }) => (
-        <ol className="list-decimal list-inside mb-[13px] space-y-[13px] text-[#1C1917]">{children}</ol>
+        <ol className="list-decimal list-inside mb-[13px] space-y-[13px] text-[#0A0A0A]">{children}</ol>
     ),
     li: ({ children }) => <li className="text-[14px] leading-[1.5714285714285714em] font-normal">{children}</li>,
     blockquote: ({ children }) => (
-        <blockquote className="border-l-4 border-[#E7E7E7] pl-4 italic my-[13px] text-[#1C1917]">
+        <blockquote className="border-l-4 border-[#E7E7E7] pl-4 italic my-[13px] text-[#0A0A0A]">
             {children}
         </blockquote>
     ),
@@ -38,14 +38,14 @@ const components: MDXComponents = {
         </code>
     ),
     pre: ({ children }) => (
-        <pre className="bg-[#E7E7E7] rounded-lg p-4 overflow-x-auto my-[13px] text-[14px]">
+        <pre className="bg-[#E7E7E7] rounded-lg p-4 overflow-x-auto my-[13px] text-[14px] max-w-full">
             {children}
         </pre>
     ),
     a: ({ href, children }) => (
         <a
             href={href}
-            className="text-[#1C1917] underline hover:opacity-70 transition-opacity"
+            className="text-[#0A0A0A] underline hover:opacity-70 transition-opacity"
             target={href?.startsWith("http") ? "_blank" : undefined}
             rel={href?.startsWith("http") ? "noopener noreferrer" : undefined}
         >
@@ -54,7 +54,7 @@ const components: MDXComponents = {
     ),
     hr: () => <hr className="border-[#E7E7E7] my-[13px]" />,
     strong: ({ children }) => (
-        <strong className="font-normal text-[#1C1917]">{children}</strong>
+        <strong className="font-normal text-[#0A0A0A]">{children}</strong>
     ),
     em: ({ children }) => <em className="italic">{children}</em>,
 };
