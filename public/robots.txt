@@ -1,0 +1,9 @@
+# https://www.robotstxt.org/robotstxt.html
+
+User-agent: *
+Allow: /
+Disallow: /week/
+
+# Only the home page should be indexed
+# Individual blog posts are noindex via meta tags
+Sitemap: https://blogs.atmiya.ca/sitemap.xml

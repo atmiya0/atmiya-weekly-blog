@@ -1,26 +1,112 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #FAFAFA;
+  --foreground: #1C1917;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #FAFAFA;
+    --foreground: #1C1917;
+  }
+}
+
+.dark {
+  --background: #FAFAFA;
+  --foreground: #1C1917;
+}
+
+.light {
+  --background: #FAFAFA;
+  --foreground: #1C1917;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-family-brunswick: var(--font-brunswick), system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  /* Prevent text resizing unexpectedly in landscape mode on iOS */
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  /* Custom font with system fallback */
+  /* When BrunswickGrotesque is added, it will be applied via --font-brunswick variable */
+  font-family: var(--font-brunswick, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif);
+  font-size: 14px;
+  line-height: 1.5714285714285714em;
+  font-weight: 400;
+  /* Use regular font without stylistic sets or contextual alternates */
+  font-feature-settings: "ss01" off, "ss02" off, "ss03" off, "ss04" off, "ss05" off, "calt" off;
+  /* Better legibility */
+  text-rendering: optimizeLegibility;
+}
+
+/* Minimal selection styling */
+::selection {
+  background: var(--foreground);
+  color: var(--background);
+}
+
+/* Focus styles for accessibility - use box-shadow to respect border-radius */
+:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--foreground);
+}
+
+/* Prose styling for article content */
+.prose {
+  max-width: 65ch;
+}
+
+/* Ensure images don't overflow */
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Brunswick Grotesque: Use regular font without stylistic sets */
+.font-brunswick,
+[class*="font-brunswick"] {
+  font-feature-settings: "ss01" off, "ss02" off, "ss03" off, "ss04" off, "ss05" off, "calt" off;
+}
+
+/* Interactive elements should disable user-select for inner content */
+a,
+button,
+[role="button"],
+[tabindex] {
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  user-select: none;
+}
+
+/* But allow text selection within links and buttons */
+a *,
+button *,
+[role="button"] *,
+[tabindex] * {
+  user-select: text;
+}
+
+/* Ensure transitions are fast (≤200ms) for interactive elements */
+a,
+button,
+[role="button"],
+[tabindex] {
+  transition-duration: 150ms;
+  transition-timing-function: ease-out;
+}
+
+/* Tabular figures for numbers to prevent layout shift */
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
 }
