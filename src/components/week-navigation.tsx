@@ -13,7 +13,7 @@ export function WeekNavigation({ previous, next }: WeekNavigationProps) {
     }
 
     return (
-        <nav className="flex items-center justify-between pt-8 mt-12 border-t border-[#E7E7E7]">
+        <nav className="flex items-center justify-between pt-8 mt-12 border-t border-[var(--divider)]">
             <div className="flex-1">
                 {previous && (
                     <Link
@@ -27,7 +27,7 @@ export function WeekNavigation({ previous, next }: WeekNavigationProps) {
                             height={18}
                             className="opacity-60 group-hover:opacity-100 transition-opacity"
                         />
-                        <span className="text-[14px] leading-[1.5714285714285714em] font-normal text-[#0A0A0A] group-hover:text-[#ff4800] transition-colors">
+                        <span className="text-[14px] leading-[1.5714285714285714em] font-normal text-[#0A0A0A] group-hover:text-[var(--brand)] transition-colors">
                             {previous.title}
                         </span>
                     </Link>
@@ -46,7 +46,7 @@ export function WeekNavigation({ previous, next }: WeekNavigationProps) {
                             height={18}
                             className="opacity-60 group-hover:opacity-100 transition-opacity"
                         />
-                        <span className="text-[14px] leading-[1.5714285714285714em] font-normal text-[#0A0A0A] group-hover:text-[#ff4800] transition-colors">
+                        <span className="text-[14px] leading-[1.5714285714285714em] font-normal text-[#0A0A0A] group-hover:text-[var(--brand)] transition-colors">
                             {next.title}
                         </span>
                     </Link>

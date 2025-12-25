@@ -50,7 +50,7 @@ export default function HomePage() {
               href="https://x.com/atmiyajadvani"
               target="_blank"
               rel="noopener noreferrer"
-              className="underline hover:text-[#ff4800] transition-colors"
+              className="link-underline"
             >
               X(twitter)
             </a>
@@ -59,7 +59,7 @@ export default function HomePage() {
               href="https://www.linkedin.com/in/atmiyajadvani/"
               target="_blank"
               rel="noopener noreferrer"
-              className="underline hover:text-[#ff4800] transition-colors"
+              className="link-underline"
             >
               LinkedIn
             </a>{" "}
@@ -68,14 +68,14 @@ export default function HomePage() {
               href="https://github.com/atmiya0"
               target="_blank"
               rel="noopener noreferrer"
-              className="underline hover:text-[#ff4800] transition-colors"
+              className="link-underline"
             >
               GitHub
             </a>
             , or feel free to send me an{" "}
             <a
               href="mailto:atmiyajadvani09@gmail.com"
-              className="underline hover:text-[#ff4800] transition-colors"
+              className="link-underline"
             >
               email
             </a>
@@ -84,23 +84,33 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* My life by weeks Section */}
+      {/* Timeline by Year Section */}
       <section>
-        <div className="flex flex-col gap-[27px]">
-          <div className="w-fit bg-[#F0F0F0] px-[16px] py-[10px] rounded-[16px]">
-            <h2 className="text-[14px] leading-[1.5714285714285714em] font-normal">
-              My life by weeks
-            </h2>
-          </div>
-          <div className="flex flex-col">
-            {weeks.length === 0 ? (
-              <p className="text-[14px] leading-[1.5714285714285714em] font-normal">
-                No weeks published yet.
-              </p>
-            ) : (
-              (() => {
-                // Group posts by startDate (same week)
-                const groupedWeeks = weeks.reduce((acc, post) => {
+        <div className="flex flex-col gap-[40px]">
+          {weeks.length === 0 ? (
+            <p className="text-[14px] leading-[1.5714285714285714em] font-normal">
+              No weeks published yet.
+            </p>
+          ) : (
+            (() => {
+              // Group posts by year (using endDate so weeks spanning years go to the new year)
+              const postsByYear = weeks.reduce((acc, post) => {
+                const year = new Date(post.endDate).getFullYear().toString();
+                if (!acc[year]) {
+                  acc[year] = [];
+                }
+                acc[year].push(post);
+                return acc;
+              }, {} as Record<string, typeof weeks>);
+
+              // Sort years descending (most recent first)
+              const years = Object.keys(postsByYear).sort((a, b) => parseInt(b) - parseInt(a));
+
+              return years.map((year) => {
+                const yearPosts = postsByYear[year];
+
+                // Group posts by week within the year
+                const groupedWeeks = yearPosts.reduce((acc, post) => {
                   const key = post.startDate;
                   if (!acc[key]) {
                     acc[key] = [];
@@ -113,54 +123,64 @@ export default function HomePage() {
                   .sort(([a], [b]) => new Date(b).getTime() - new Date(a).getTime());
 
                 return (
-                  <div className="relative">
-                    {/* Continuous vertical line - only show if more than one week group */}
-                    {weekGroups.length > 1 && (
-                      <div
-                        className="absolute left-[8.5px] top-[11px] w-[1px] bg-[#E7E7E7]"
-                        style={{ height: `calc(100% - 54px)` }}
-                      />
-                    )}
-                    {weekGroups.map(([startDate, posts]) => (
-                      <div key={startDate} className="relative flex">
-                        {/* Timeline arrow icon */}
-                        <div className="mr-[14px] flex-shrink-0">
-                          <Image
-                            src="/up-arrow.svg"
-                            alt=""
-                            width={18}
-                            height={18}
-                            className="mt-[2px]"
-                          />
-                        </div>
-                        {/* Content */}
-                        <div className="flex flex-col pb-[32px] flex-1">
-                          {/* Week number and dates */}
-                          <p className="text-[14px] leading-[1.5714285714285714em] font-normal opacity-60 mb-[8px]">
-                            Week {getISOWeekNumber(posts[0].startDate)} · {formatDateRange(posts[0].startDate, posts[0].endDate)}
-                          </p>
-                          {/* Blog titles - all posts for this week */}
-                          <div className="flex flex-col gap-[4px]">
-                            {posts.map((post) => (
-                              <Link
-                                key={post.slug}
-                                href={`/week/${post.slug}`}
-                                className="group"
-                              >
-                                <p className="text-[14px] leading-[1.5714285714285714em] font-normal group-hover:text-[#ff4800] transition-colors">
-                                  {post.title}
-                                </p>
-                              </Link>
-                            ))}
+                  <div key={year} className="flex flex-col gap-[27px]">
+                    {/* Year pill */}
+                    <div className="pill">
+                      <h2 className="text-[14px] leading-[1.5714285714285714em] font-normal">
+                        {year}
+                      </h2>
+                    </div>
+
+                    {/* Timeline for this year */}
+                    <div className="relative">
+                      {/* Continuous vertical line - only show if more than one week group */}
+                      {weekGroups.length > 1 && (
+                        <div
+                          className="absolute left-[8.5px] top-[11px] w-[1px] bg-[var(--divider)]"
+                          style={{ height: `calc(100% - 54px)` }}
+                        />
+                      )}
+                      {weekGroups.map(([startDate, posts]) => (
+                        <div key={startDate} className="relative flex">
+                          {/* Timeline arrow icon */}
+                          <div className="mr-[14px] flex-shrink-0">
+                            <Image
+                              src="/up-arrow.svg"
+                              alt=""
+                              width={18}
+                              height={18}
+                              className="mt-[2px]"
+                            />
+                          </div>
+                          {/* Content */}
+                          <div className="flex flex-col pb-[20px] flex-1">
+                            {/* Week number and dates */}
+                            <p className="text-[14px] leading-[1.5714285714285714em] font-normal opacity-60 mb-[8px]">
+                              Week {getISOWeekNumber(posts[0].startDate)} = {formatDateRange(posts[0].startDate, posts[0].endDate)}
+                            </p>
+                            {/* Blog titles - all posts for this week */}
+                            <div className="flex flex-col gap-[4px]">
+                              {posts.map((post) => (
+                                <Link
+                                  key={post.slug}
+                                  href={`/week/${post.slug}`}
+                                  className="group"
+                                >
+                                  <p className="text-[14px] leading-[1.5714285714285714em] font-normal group-hover:text-[var(--brand)] transition-colors">
+                                    {post.title}
+                                  </p>
+                                </Link>
+                              ))}
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    ))}
+                      ))}
+                    </div>
                   </div>
                 );
-              })()
-            )}
-          </div>
+              });
+            })()
+          )}
         </div>
       </section>
     </BlogLayout>

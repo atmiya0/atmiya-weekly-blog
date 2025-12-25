@@ -60,11 +60,11 @@ export default async function WeekPage({ params }: PageProps) {
     return (
         <BlogLayout>
             <article>
-                <header className="mb-[72px]">
+                <header className="mb-[40px]">
                     <div className="flex flex-col gap-[13px]">
                         <Link
                             href="/"
-                            className="inline-flex items-center gap-2 text-[14px] leading-[1.5714285714285714em] font-normal group"
+                            className="inline-flex items-center gap-2 text-[14px] leading-[1.5714285714285714em] font-normal group mb-[24px]"
                         >
                             <Image
                                 src="/left-arrow.svg"
@@ -78,8 +78,8 @@ export default async function WeekPage({ params }: PageProps) {
                         <p className="text-[14px] leading-[1.5714285714285714em] font-normal">
                             Week {week.week} = {formatDateRange(week.startDate, week.endDate)}
                         </p>
-                        <div className="w-full h-[1px] bg-[#E7E7E7]"></div>
-                        <h1 className="text-[14px] leading-[1.5714285714285714em] font-normal">{week.title}</h1>
+                        <h1 className="text-title">{week.title}</h1>
+                        <div className="divider"></div>
                     </div>
                 </header>
 

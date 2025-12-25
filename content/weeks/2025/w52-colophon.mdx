@@ -23,10 +23,12 @@ This is the colophon—a detailed documentation of everything used to build this
 - **@mdx-js/loader & @mdx-js/react** — MDX processing and React integration
 - **gray-matter** — YAML frontmatter parsing for post metadata
 - **reading-time** — Automatic reading time calculation
+- **date-fns** — Date manipulation and ISO week calculation
 
 ### Styling
 
 - **Tailwind CSS 4** — Utility-first CSS framework
+- **CSS Custom Properties** — Centralized design tokens for global consistency
 - **@tailwindcss/postcss** — PostCSS integration for Tailwind
 
 ### Typography
@@ -34,6 +36,7 @@ This is the colophon—a detailed documentation of everything used to build this
 - **Brunswick Grotesque** — Custom font loaded via `next/font/local`
 - Regular weight only, no stylistic sets enabled
 - 14px base size with 1.571em line height
+- 24px for titles with 1.3em line height
 
 ### Development Tools
 
@@ -41,55 +44,106 @@ This is the colophon—a detailed documentation of everything used to build this
 - **Prettier 3** — Code formatting
 - **babel-plugin-react-compiler** — React Compiler for automatic optimizations
 
-## Design Decisions
+## Design System
 
-### Layout
+### Centralized Design Tokens
 
-The blog uses a **two-column layout** on desktop:
+All design values are defined as CSS variables in `:root` for easy global updates:
 
-- **Left column** (fixed): Profile information, stays in place while scrolling
-- **Right column** (scrollable): Main content area
+```css
+:root {
+  /* Colors */
+  --background: #FAFAFA;
+  --foreground: #0A0A0A;
+  --brand: #ff4800;
+  --muted: #626262;
+  --divider: #E7E7E7;
+  --surface: #F0F0F0;
+  
+  /* Typography */
+  --text-base: 14px;
+  --text-lg: 24px;
+  --line-height-base: 1.5714285714285714;
+  --line-height-tight: 1.3;
+}
+```
 
-On mobile, the layout collapses to a single column with the header at the top.
+### Global CSS Classes
+
+Reusable utility classes for consistency:
+
+- `.text-body` — Base text styling
+- `.text-title` — Large title styling
+- `.text-muted` — Secondary/faded text
+- `.link-underline` — Underlined links with brand hover
+- `.divider` — Horizontal separator lines
+- `.pill` — Rounded container for tags/labels
 
 ### Colors
 
-A minimal, two-tone palette:
+A minimal palette with brand accent:
 
-- **Left sidebar**: `#FAFAFA` (warm off-white)
-- **Right content**: `#FFFFFF` (pure white)
-- **Text**: `#1C1917` (warm black)
+- **Background**: `#FAFAFA` (warm off-white)
+- **Text**: `#0A0A0A` (near black)
+- **Brand/Hover**: `#ff4800` (orange)
 - **Dividers**: `#E7E7E7` (light gray)
+- **Surface**: `#F0F0F0` (container backgrounds)
 
-### Typography Philosophy
+## Content Structure
 
-Single font, single weight, single size. The lack of visual hierarchy through typography forces clarity in writing. Structure comes from content, not from bold headings or varied sizes.
+### Blog Post Frontmatter
+
+Each blog post requires:
+
+```yaml
+---
+title: "Post Title"
+startDate: "YYYY-MM-DD"  # Must be a Monday
+endDate: "YYYY-MM-DD"    # Must be the following Sunday
+summary: "Brief description"
+slug: "url-friendly-slug"
+week: 52  # Optional, calculated dynamically
+---
+```
+
+### Date Validation
+
+The system enforces strict date rules:
+- **startDate** must be a Monday
+- **endDate** must be a Sunday
+- Duration must be exactly 6 days
+- Week numbers are calculated automatically using ISO 8601
+
+### Timeline Grouping
+
+Posts are grouped by week on the home page. Multiple posts in the same week (same `startDate`) appear under a single timeline entry.
 
 ## File Structure
 
 ```
 content/
-  weeks/           # MDX blog posts
+  weeks/              # MDX blog posts
+    _template.mdx     # Template for new posts
     week-01.mdx
     colophon.mdx
 src/
   app/
-    page.tsx       # Home page
-    layout.tsx     # Root layout
-    globals.css    # Global styles
+    page.tsx          # Home page with timeline
+    layout.tsx        # Root layout
+    globals.css       # Design tokens & global styles
     week/
       [slug]/
-        page.tsx   # Individual post pages
+        page.tsx      # Individual post pages
   components/
-    blog-layout.tsx    # Shared two-column layout
-    countdown.tsx      # Countdown timer
-    mdx-content.tsx    # MDX renderer
-    week-navigation.tsx # Previous/next navigation
+    blog-layout.tsx       # Two-column layout
+    mdx-content.tsx       # MDX renderer
+    week-navigation.tsx   # Previous/next navigation
+    keyboard-navigation.tsx # Keyboard shortcuts
   lib/
-    weeks.ts       # Post loading utilities
-    dates.ts       # Date formatting helpers
-  styles/
-    typography.ts  # Font configuration
+    weeks.ts          # Post loading & validation
+    dates.ts          # Date formatting & ISO week
+  types/
+    week.ts           # TypeScript types
 ```
 
 ## Hosting & Deployment
@@ -129,4 +183,4 @@ Static generation means every page is pre-rendered at build time. No JavaScript 
 
 ---
 
-This colophon will be updated as the blog evolves.
+*Last updated: December 2025*
