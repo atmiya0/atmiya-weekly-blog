@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Script from "next/script";
+import { Analytics } from "@vercel/analytics/react";
 import { brunswickGrotesque } from "@/styles/typography";
 import "./globals.css";
 
@@ -84,6 +85,7 @@ export default function RootLayout({
       </head>
       <body className={`${brunswickGrotesque.variable} font-brunswick antialiased min-h-screen`}>
         {children}
+        <Analytics />
       </body>
     </html>
   );
