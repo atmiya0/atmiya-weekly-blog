@@ -24,12 +24,19 @@ function calculateTimeUntil2031(): TimeRemaining {
 
 export function Countdown() {
   const [timeRemaining, setTimeRemaining] = useState<TimeRemaining | null>(null);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    // Subscribe to time updates via interval - setState only in callback
+    // Mark as mounted
+    setMounted(true);
+
+    // Set initial time
+    setTimeRemaining(calculateTimeUntil2031());
+
+    // Update every second to show the countdown ticking
     const interval = setInterval(() => {
       setTimeRemaining(calculateTimeUntil2031());
-    }, 100); // Start quickly, then every 100ms for smooth updates
+    }, 1000);
 
     return () => clearInterval(interval);
   }, []);
@@ -38,15 +45,18 @@ export function Countdown() {
     return value.toString().padStart(2, "0");
   };
 
-  // Render placeholder during SSR
-  if (!timeRemaining) {
-    return <p className="text-body tabular-nums">--:--:--:-- (till 2031)</p>;
+  // Render placeholder during SSR and before mount
+  if (!mounted || !timeRemaining) {
+    return (
+      <p className="text-body tabular-nums">
+        --:--:--:-- (till 2031)
+      </p>
+    );
   }
 
   return (
-    <p className="text-body tabular-nums" suppressHydrationWarning>
-      {timeRemaining.days}:{formatTime(timeRemaining.hours)}:{formatTime(timeRemaining.minutes)}:
-      {formatTime(timeRemaining.seconds)} (till 2031)
+    <p className="text-body tabular-nums">
+      {timeRemaining.days}:{formatTime(timeRemaining.hours)}:{formatTime(timeRemaining.minutes)}:{formatTime(timeRemaining.seconds)} (till 2031)
     </p>
   );
 }

@@ -1,5 +1,4 @@
-Untitled Post
-2026-01-05,2026-01-11
+Title
+Summary
 
-
-Start writing your content here...
+Your content here.

@@ -1,0 +1,196 @@
+How to Write Blogs
+A guide on how to write and publish blog posts on this weekly blog.
+
+This is a guide on how to write and publish blog posts on this weekly blog. Follow these guidelines to maintain consistency and quality.
+
+## Getting Started
+
+### File Location
+
+All blog posts are stored in `content/weeks/` organized by year:
+
+```
+content/weeks/
+├── _template.txt               # Template with checklist
+├── 2025/
+│   └── 2025-12-22-your-post-slug.txt
+└── 2026/
+    └── 2025-12-29-your-post-slug.txt
+```
+
+**Important:** Place files in the correct year folder based on the week's Monday date.
+
+### File Naming Convention
+
+**Format:** `YYYY-MM-DD-your-slug.txt`
+
+**The date should be the Monday of your week.** The system will automatically:
+- Normalize the date to the Monday of that ISO week
+- Calculate the Sunday end date (6 days later)
+- Validate dates in development mode
+
+**Examples:**
+- ✅ `2025-12-22-how-to-write-blogs.txt` (Dec 22, 2025 is a Monday)
+- ✅ `2025-12-29-purpose-of-this-blog.txt` (Dec 29, 2025 is a Monday)
+- ❌ `2025-12-25-christmas-post.txt` (Dec 25, 2025 is a Thursday - will be normalized to Dec 22)
+
+**Note:** If you use a date that's not a Monday, the system will normalize it to the Monday of that week, but you'll see a warning in development mode.
+
+## File Structure
+
+Every blog post should have this structure:
+
+**Line 1:** Your Title (required)  
+**Line 2:** A brief summary (optional - auto-generated from content if empty)  
+**Line 3+:** Your content (supports Markdown)
+
+Example:
+
+```
+My Amazing Week
+This week I learned a lot about writing and productivity.
+
+Content starts here. Just write naturally in plain English.
+
+You can use double newlines to create new paragraphs.
+
+## You can use Markdown headings if you want
+
+- Bullet points work
+- Just like normal
+
+**Bold text** and *italic text* also work if needed.
+
+But you don't have to use any Markdown if you don't want to!
+```
+
+### What Happens Automatically
+
+The system will:
+1. Extract the date from the filename
+2. Normalize it to the Monday of that ISO week
+3. Calculate the Sunday end date (6 days after Monday)
+4. Extract the slug from the filename (part after the date)
+5. Generate a summary from content if Line 2 is empty
+6. Calculate reading time
+7. Validate dates in development mode (warns if not Monday-Sunday)
+
+## Writing Content
+
+### Keep It Simple
+
+- Write in plain English
+- Use double newlines to create new paragraphs
+- No frontmatter or YAML needed (unless using .mdx files)
+- No strict formatting rules
+
+### Optional Markdown
+
+If you want to use Markdown features, go ahead:
+
+- `## Headings` for sections
+- `**bold**` for emphasis
+- `*italic*` for subtle emphasis
+- `[links](https://example.com)` for external links
+- `- bullet points` for lists
+- `1. numbered lists` for sequences
+
+But plain text works perfectly fine too!
+
+## Style Guidelines
+
+### Writing Tone
+
+- **Clear and direct** — No fluff
+- **Personal but professional** — Write for yourself, but as if someone is reading
+- **Honest** — Document failures as well as successes
+
+### Structure
+
+1. **Start with context** — What is this week about?
+2. **Main content** — Details, learnings, progress
+3. **Reflection** — What worked? What didn't?
+4. **Looking ahead** — What's next?
+
+### Length
+
+- No strict limits, but aim for quality over quantity
+- A few hundred words is perfectly fine
+- Don't pad content unnecessarily
+
+## Publishing
+
+### Quick Workflow
+
+1. Run `npm run new-post "Your Title" "Your summary"` (recommended)
+2. Open the generated file
+3. Replace placeholder content with your actual writing
+4. Use the pre-publish checklist from `_template.txt`
+5. Save and commit
+
+### Manual Workflow
+
+1. Create your `.txt` file in `content/weeks/YYYY/` (use the correct year folder)
+2. Name it `YYYY-MM-DD-your-slug.txt` where the date is a Monday
+3. Write your title (Line 1), summary (Line 2), and content (Line 3+)
+4. Save the file
+5. Preview with `npm run dev`
+6. Check for date validation warnings in console
+
+### The Automation Way (Recommended)
+
+Run this in your terminal:
+```bash
+npm run new-post "My Title" "My Summary"
+```
+
+This creates a file with:
+- The correct date (next Monday after the latest post)
+- Proper filename format
+- Pre-filled template content
+- Placed in the correct year folder
+
+## Pre-Publish Checklist
+
+Before publishing, verify:
+
+- [ ] File is named correctly: `YYYY-MM-DD-slug.txt`
+- [ ] Date in filename is a Monday
+- [ ] File is in the correct year folder: `content/weeks/YYYY/`
+- [ ] Line 1 has a clear, descriptive title
+- [ ] Line 2 has a summary (or intentionally left blank)
+- [ ] Content is written and complete
+- [ ] No placeholder text remaining
+- [ ] Ran `npm run dev` and previewed the post
+- [ ] No console warnings about date validation
+
+*(You can also find this checklist in `content/weeks/_template.txt`)*
+
+## Tips
+
+- **Write weekly** — Consistency matters more than perfection
+- **Ship imperfect** — Better published than perfect in drafts
+- **Be specific** — Details are what make posts valuable
+- **Use headings** — Break up content for readability (or don't!)
+- **Keep slugs short** — They appear in URLs
+- **Check the template** — Reference `_template.txt` for formatting examples
+- **Watch the console** — Development mode shows helpful warnings about dates
+
+## Troubleshooting
+
+### "Date validation failed" warning
+
+This means your dates don't follow the Monday-Sunday rule:
+- Ensure `startDate` (from filename) is a Monday
+- The system auto-calculates the Sunday, but if you see this warning, check your filename date
+
+### Post not showing up
+
+- Make sure the file is in `content/weeks/YYYY/` (not just `content/weeks/`)
+- File should end in `.txt` or `.mdx`
+- File should not start with `_` (underscore)
+- Restart dev server if needed
+
+---
+
+This guide will be updated as the blog evolves.

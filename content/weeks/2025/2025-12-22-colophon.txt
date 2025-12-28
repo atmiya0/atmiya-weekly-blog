@@ -1,0 +1,249 @@
+Colophon
+A detailed look at the technology, design decisions, and tools used to build this weekly blog.
+
+This is the colophon—a detailed documentation of everything used to build this blog. Consider it a reference for future self and anyone curious about the technical decisions behind this space.
+
+## Technology Stack
+
+### Framework & Runtime
+
+- **Next.js 16.1.1** — React framework with App Router for static site generation (via Turbopack)
+- **React 19.2.3** — Latest React with the new React Compiler
+- **TypeScript 5** — Strict type checking throughout the codebase, no `any` types allowed
+
+### Content Management
+
+- **Plain Text + MDX** — Write in simple `.txt` files or use MDX for advanced features
+- **Zero-Config Dates** — Automatic week calculation from filenames (`YYYY-MM-DD-slug.txt`) or file creation dates
+- **gray-matter** — YAML frontmatter parsing for legacy MDX posts
+- **reading-time** — Automatic reading time calculation
+- **date-fns** — Date manipulation and ISO week calculation
+
+The system accepts both `.txt` (plain text) and `.mdx` (Markdown with frontmatter) files. Plain text files are much simpler to work with—just drop a file in `content/weeks/YYYY/` and it's live.
+
+### Interactivity & Forms
+
+- **Tally.so** — Integrated contact form for feedback and inquiries
+- **React Portal-Based Side Tray** — Slide-out tray (right-to-left) rendered using `createPortal` to avoid HTML nesting issues
+- **Keyboard Shortcuts** — Global "f" key listener to quickly open the contact form, Escape to close
+- **Next.js Script** — Optimized loading of third-party widgets with `afterInteractive` strategy
+- **Proper Hydration** — All time-dependent components use proper SSR/client hydration patterns to avoid mismatches
+
+The contact tray is built with React Portals, ensuring the overlay and modal elements render at `document.body` level, avoiding invalid HTML nesting and hydration errors.
+
+### Styling
+
+- **Tailwind CSS 4** — Utility-first CSS framework
+- **CSS Custom Properties** — Centralized design tokens for global consistency
+- **@tailwindcss/postcss** — PostCSS integration for Tailwind
+
+### Typography
+
+- **Brunswick Grotesque** — Custom font loaded via `next/font/local`
+- Regular weight only, no stylistic sets enabled
+- 14px base size with 1.571em line height
+- 24px for titles with 1.3em line height
+
+### Development Tools
+
+- **ESLint 9** with Next.js config — Code linting with strict rules:
+  - No unescaped entities in JSX (using `&apos;` for apostrophes)
+  - No explicit `any` types
+  - React hooks dependency validation
+  - Proper setState patterns in effects
+- **Prettier 3** — Code formatting
+- **babel-plugin-react-compiler** — React Compiler for automatic optimizations
+
+## Design System
+
+### Centralized Design Tokens
+
+All design values are defined as CSS variables in `:root` for easy global updates:
+
+```css
+:root {
+  /* Colors */
+  --background: #FAFAFA;
+  --foreground: #0A0A0A;
+  --brand: #ff4800;
+  --muted: #626262;
+  --divider: #E7E7E7;
+  --surface: #F0F0F0;
+  
+  /* Typography */
+  --text-base: 14px;
+  --text-lg: 24px;
+  --line-height-base: 1.5714285714285714;
+  --line-height-tight: 1.3;
+}
+```
+
+### Global CSS Classes
+
+Reusable utility classes for consistency:
+
+- `.text-body` — Base text styling
+- `.text-title` — Large title styling
+- `.text-muted` — Secondary/faded text
+- `.link-underline` — Underlined links with brand hover
+- `.divider` — Horizontal separator lines
+- `.pill` — Rounded container for tags/labels
+
+### Colors
+
+A minimal palette with brand accent:
+
+- **Background**: `#FAFAFA` (warm off-white)
+- **Text**: `#0A0A0A` (near black)
+- **Brand/Hover**: `#ff4800` (orange)
+- **Dividers**: `#E7E7E7` (light gray)
+- **Surface**: `#F0F0F0` (container backgrounds)
+
+## Content Structure
+
+### Blog Post Format
+
+Each blog post is a simple `.txt` file:
+
+**Line 1:** Title  
+**Line 2:** Summary (optional, auto-generated from content if empty)  
+**Line 3+:** Content (supports Markdown)
+
+**File naming:** `YYYY-MM-DD-your-slug.txt` where the date should be a Monday.
+
+The system automatically:
+- Normalizes the date to the Monday of that ISO week
+- Calculates the Sunday end date
+- Extracts the slug from the filename
+- Organizes posts by year folder
+
+For legacy MDX posts, the old frontmatter format still works:
+
+```yaml
+---
+title: "Post Title"
+startDate: "YYYY-MM-DD"  # Must be a Monday
+endDate: "YYYY-MM-DD"    # Must be the following Sunday
+summary: "Brief description"
+slug: "url-friendly-slug"
+week: 52  # Optional, calculated dynamically
+---
+```
+
+### Date Validation
+
+The system enforces strict date rules (in development mode):
+- **startDate** must be a Monday
+- **endDate** must be a Sunday
+- Duration must be exactly 6 days
+- Week numbers are calculated automatically using ISO 8601
+- Warns about overlapping or duplicate weeks
+- Warns about gaps between weeks
+
+### Timeline Grouping
+
+Posts are grouped by week on the home page. Multiple posts in the same week (same `startDate`) appear under a single timeline entry.
+
+## File Structure
+
+```
+content/
+  weeks/                        # Blog posts
+    _template.txt               # Template with checklist and formatting guide
+    2025/
+      2025-12-22-colophon.txt   # Plain text posts (this file!)
+    2026/
+      2026-01-04-post.txt
+src/
+  app/
+    page.tsx                    # Home page with timeline
+    layout.tsx                  # Root layout
+    globals.css                 # Design tokens & global styles
+    week/
+      [slug]/
+        page.tsx                # Individual post pages
+  components/
+    blog-layout.tsx             # Two-column layout with sidebar
+    contact-tray.tsx            # Portal-based slide-out contact form
+    countdown.tsx               # SSR-safe countdown component
+    mdx-content.tsx             # MDX renderer
+    week-navigation.tsx         # Previous/next navigation
+    keyboard-navigation.tsx     # Keyboard shortcuts (arrows)
+  lib/
+    weeks.ts                    # Post loading, validation & parsing
+    dates.ts                    # Date formatting & ISO week utilities
+  types/
+    week.ts                     # TypeScript types
+scripts/
+  new-post.mjs                  # CLI tool to create new posts
+```
+
+## Hosting & Deployment
+
+- **Vercel** — Automatic deployments from GitHub
+- **Domain**: blogs.atmiya.ca
+- **Static export** — No server required at runtime
+- **Git-based deploys** — Only deploys on changes to `main` branch
+
+## Technical Patterns
+
+### SSR & Hydration Safety
+
+All dynamic client components (countdown, contact tray) follow strict SSR patterns:
+- Server always renders a consistent placeholder
+- Client state is initialized after mount
+- No `typeof window !== 'undefined'` checks in initial state
+- Proper use of `useEffect` for client-only logic
+
+### Type Safety
+
+- Zero `any` types in the codebase
+- Custom interface extensions for third-party libraries (e.g., `TallyWindow` for Tally.so)
+- Strict TypeScript configuration
+
+### React Patterns
+
+- **Portals** for modals/overlays to avoid DOM nesting issues
+- **Controlled components** for all interactive elements
+- **Custom hooks** for keyboard event listeners
+- **Proper cleanup** in all `useEffect` hooks
+
+## What's Intentionally Not Here
+
+- No analytics or tracking
+- No comments system
+- No newsletter signup
+- No social share buttons
+- No database or CMS
+- No authentication
+- No dark mode (yet)
+
+The focus is on writing and reading. Everything else is noise. The only exception is a minimal contact form for direct communication.
+
+## Dependencies Summary
+
+**Production:**
+- next, react, react-dom
+- @mdx-js/loader, @mdx-js/react, @next/mdx
+- date-fns, gray-matter, reading-time
+- next-themes (for future dark mode)
+
+**Development:**
+- tailwindcss, @tailwindcss/postcss
+- typescript, eslint, prettier
+- Various type definitions
+
+## Performance
+
+Static generation means every page is pre-rendered at build time. No JavaScript required for the initial content render. The entire site is just HTML, CSS, and minimal JS for interactivity (contact form, keyboard shortcuts, countdown timer).
+
+## Philosophy
+
+This blog is built for simplicity. Writing should be as simple as creating a text file and typing. No complex CMS, no database, no elaborate build processes. Just words and timestamps.
+
+The template file includes a pre-publish checklist to ensure posts are properly formatted before going live. Run `npm run new-post "Your Title" "Your summary"` to auto-generate a correctly formatted file.
+
+---
+
+*Last updated: December 28, 2025*
+

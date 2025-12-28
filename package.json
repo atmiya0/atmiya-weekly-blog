@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "new-post": "node scripts/new-post.mjs"
   },
   "dependencies": {
     "@mdx-js/loader": "^3.1.1",

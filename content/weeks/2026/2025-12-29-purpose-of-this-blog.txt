@@ -1,11 +1,5 @@
----
-title: "Purpose of This Blog"
-startDate: "2025-12-29"
-endDate: "2026-01-04"
-summary: "Why I'm documenting my life by weeks."
-slug: "purpose-of-this-blog"
-week: 1
----
+Purpose of This Blog
+Why I'm documenting my life by weeks.
 
 This blog exists to document life one week at a time. I am fully confident that I will make it in life,
 and this blog is the track record that proves the work, the consistency, and the progress behind that belief.

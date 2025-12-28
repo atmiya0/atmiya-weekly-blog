@@ -1,6 +1,6 @@
 # Weekly Blog
 
-A minimal, file-based weekly blog built with Next.js, TypeScript, and MDX. Designed for long-term consistency and personal documentation.
+A minimal, file-based weekly blog built with Next.js, TypeScript, and plain text. Designed for long-term consistency and personal documentation.
 
 **Live at:** [blogs.atmiya.ca](https://blogs.atmiya.ca)
 
@@ -10,16 +10,32 @@ A minimal, file-based weekly blog built with Next.js, TypeScript, and MDX. Desig
 
 **Time required:** Under 1 minute
 
-```bash
-# 1. Duplicate the previous week
-cp content/weeks/week-01.mdx content/weeks/week-02.mdx
+### Option 1: Automated (Recommended)
 
-# 2. Edit the frontmatter and content
-# 3. Deploy
-git add . && git commit -m "Week 2" && git push
+```bash
+npm run new-post "My Week Title" "A short summary"
 ```
 
-That's it. Vercel handles the rest.
+This automatically creates a `.txt` file with the correct date in the right folder.
+
+### Option 2: Manual
+
+1. Create a new `.txt` file in `content/weeks/` (or a year subfolder)
+2. Write:
+   - **Line 1**: Your title
+   - **Line 2**: A short summary (optional)
+   - **Line 3+**: Your content
+3. Save and push to GitHub
+
+Example filename: `2026-01-05-my-week.txt` (or just `my-week.txt`)
+
+### Deploy
+
+```bash
+git add . && git commit -m "Week N" && git push
+```
+
+Vercel handles the rest.
 
 ---
 
@@ -30,7 +46,6 @@ The blog is configured to use **BrunswickGrotesque** as the custom font. Until f
 ### Adding Your Font Files
 
 1. Add your `.woff2` files to `src/fonts/`:
-
    ```
    src/fonts/
    ├── BrunswickGrotesque-Regular.woff2
@@ -75,13 +90,12 @@ Individual blog posts are **intentionally de-indexed** to:
 
 ### Implementation
 
-| Page                   | Robots Directive  | Canonical URL |
-| ---------------------- | ----------------- | ------------- |
-| Home (`/`)             | `index, follow`   | Self          |
-| Blog posts (`/week/*`) | `noindex, follow` | Home page     |
+| Page | Robots Directive | Canonical URL |
+|------|-----------------|---------------|
+| Home (`/`) | `index, follow` | Self |
+| Blog posts (`/week/*`) | `noindex, follow` | Home page |
 
 Additional measures:
-
 - **robots.txt**: Disallows `/week/` paths
 - **sitemap.xml**: Only includes the home page
 - **RSS feed**: Exists for subscribers, not SEO
@@ -89,12 +103,38 @@ Additional measures:
 
 ---
 
-## Frontmatter Reference
+## Content Format
 
-Every MDX file in `content/weeks/` requires these fields:
+Blog posts are written in **plain text** (`.txt` files) for maximum simplicity. MDX (`.mdx`) files are also supported for backwards compatibility.
+
+### Plain Text Format (Recommended)
+
+```
+Your Blog Title
+A brief summary (optional)
+
+Your content goes here. Write naturally in plain English.
+
+You can use Markdown if you want (headings, **bold**, *italic*, etc.)
+But plain text works perfectly fine too!
+```
+### Field Reference (MDX only)
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `title` | string | The title of the post |
+| `week` | number | Week number (calculated automatically) |
+| `startDate` | string | Monday of the week (YYYY-MM-DD) |
+| `endDate` | string | Sunday of the week (YYYY-MM-DD) |
+| `summary` | string | Brief summary for listings |
+| `slug` | string | URL-friendly identifier |
+
+For `.txt` files, all of this is handled automatically.
+
+For backwards compatibility, MDX files with YAML frontmatter still work:
 
 ```yaml
----
+---Plain text (`.txt`) and MDX (`.mdx`)
 title: "Your title here"
 week: 2
 startDate: "2024-12-30"
@@ -104,38 +144,43 @@ slug: "week-02"
 ---
 ```
 
-| Field       | Type   | Description                               |
-| ----------- | ------ | ----------------------------------------- |
-| `title`     | string | The title of the post                     |
-| `week`      | number | Week number (1, 2, 3...)                  |
-| `startDate` | string | Start of the week (YYYY-MM-DD)            |
-| `endDate`   | string | End of the week (YYYY-MM-DD)              |
-| `summary`   | string | Brief summary for listings                |
-| `slug`      | string | URL-friendly identifier (e.g., "week-01") |
-
----
-
-## Tech Stack
-
-- **Framework**: Next.js 16 (App Router)
-- **Language**: TypeScript (strict mode)
-- **Styling**: Tailwind CSS v4
-- **Content**: File-based MDX
-- **Deployment**: Vercel (static export)
-- **Code Quality**: ESLint + Prettier
-
----
-
-## Project Structure
-
-```
-atmiya-weekly-blog/
-├── content/
-│   └── weeks/              # MDX blog posts
-│       ├── week-01.mdx
-│       └── week-02.mdx
+| Field | Type | Description |
+|-------|------|------------    # Blog posts
+│       ├── 2025/
+│       │   ├── 2025-12-22-post.txt   # Plain text posts
+│       │   └── w52-legacy.mdx        # Legacy MDX posts
+│       └── 2026/
+│           └── 2026-01-05-post.txt
+├── scripts/
+│   └── new-post.mjs            # CLI tool to create posts
 ├── src/
 │   ├── app/
+│   │   ├── layout.tsx          # Root layout with font config
+│   │   ├── page.tsx            # Home page (indexed)
+│   │   ├── globals.css         # Global styles
+│   │   ├── sitemap.ts          # Only includes home page
+│   │   ├── feed.xml/           # RSS feed
+│   │   └── week/
+│   │       └── [slug]/         # Blog post pages (noindex)
+│   │           └── page.tsx
+│   ├── components/
+│   │   ├── blog-layout.tsx
+│   │   ├── countdown.tsx
+│   │   ├── keyboard-navigation.tsx
+│   │   ├── mdx-content.tsx
+│   │   └── week-navigation.tsx
+│   ├── fonts/                  # Custom font files
+│   │   └── README.md
+│   ├── lib/
+│   │   ├── dates.ts
+│   │   └── weeks.ts            # Handles both .txt and .mdx
+│   └── types/
+│       └── week.ts
+├── public/
+│   └── robots.txt
+├── README.md                   # This file
+├── README_WRITING.md           # Writing guide
+├── mdx-components.tsx          # MDX component overrides
 │   │   ├── layout.tsx      # Root layout with font config
 │   │   ├── page.tsx        # Home page (indexed)
 │   │   ├── globals.css     # Global styles
@@ -190,52 +235,9 @@ npm run format
 
 ---
 
-## Admin Panel
-
-The blog includes a password-protected admin panel for managing posts from anywhere.
-
-### Setup
-
-1. **Create a GitHub Personal Access Token:**
-   - Go to [GitHub Settings → Tokens](https://github.com/settings/tokens)
-   - Generate a new token (classic) with `repo` scope
-   - Copy the token
-
-2. **Set Environment Variables:**
-
-   In Vercel (or your `.env.local` for local dev):
-
-   ```
-   ADMIN_PASSWORD=your-secure-password
-   GITHUB_TOKEN=ghp_your_token_here
-   GITHUB_REPO=your-username/your-repo-name
-   ```
-
-3. **Access the Admin Panel:**
-   - Visit `/admin` on your deployed site
-   - Enter your admin password
-   - Create, edit, and delete posts from the dashboard
-
-### Security
-
-- All admin routes are password-protected
-- Sessions use HTTP-only secure cookies
-- GitHub token is never exposed to the client
-- Posts are committed directly to your repository
-
----
-
 ## Deployment
 
-The blog is deployed on Vercel with server-side rendering for the admin panel. Push to `main` branch and Vercel automatically builds and deploys.
-
-### Environment Variables for Vercel
-
-| Variable         | Description                  |
-| ---------------- | ---------------------------- |
-| `ADMIN_PASSWORD` | Password for admin access    |
-| `GITHUB_TOKEN`   | GitHub PAT with `repo` scope |
-| `GITHUB_REPO`    | Format: `username/repo-name` |
+The blog uses static export (`output: 'export'`). Push to `main` branch and Vercel automatically builds and deploys.
 
 ---
 

@@ -1,0 +1,14 @@
+Week 2 Placeholder
+Placeholder for Week 2 of 2026 — to be written.
+
+*This is a placeholder for Week 2 of 2026.*
+
+## TODO
+
+- [ ] Write about this week's projects
+- [ ] Document learnings
+- [ ] Reflect on progress
+
+---
+
+Content coming soon.
