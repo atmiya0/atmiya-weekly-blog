@@ -4,7 +4,6 @@ import Image from "next/image";
 import { getAllWeeks } from "@/lib/weeks";
 import { formatDateRange, getISOWeekNumber } from "@/lib/dates";
 import { BlogLayout } from "@/components/blog-layout";
-import { ContactTray } from "@/components/contact-tray";
 
 export const metadata: Metadata = {
   title: "Atmiya's Blog | Atmiya Jadvani",
@@ -73,7 +72,16 @@ export default function HomePage() {
             >
               GitHub
             </a>
-            , or <ContactTray /> (press f).
+            , or{" "}
+            <a
+              href="https://tally.so/r/2EB2OV"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="link-underline"
+            >
+              reach out via form
+            </a>
+            .
           </p>
           <p className="text-[14px] leading-[1.5714285714285714em] font-normal">
             I&apos;m open to full-time roles in Toronto — frontend engineer, design engineer, or similar.

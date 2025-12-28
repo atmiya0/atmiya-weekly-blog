@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 interface TimeRemaining {
   days: number;
@@ -24,29 +24,34 @@ function calculateTimeUntil2031(): TimeRemaining {
 
 export function Countdown() {
   const [timeRemaining, setTimeRemaining] = useState<TimeRemaining | null>(null);
-  const [mounted, setMounted] = useState(false);
+  const mountedRef = useRef(false);
 
   useEffect(() => {
-    // Mark as mounted
-    setMounted(true);
+    mountedRef.current = true;
 
-    // Set initial time
+    // Set initial time immediately (intentional for hydration)
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setTimeRemaining(calculateTimeUntil2031());
 
-    // Update every second to show the countdown ticking
+    // Update every second
     const interval = setInterval(() => {
-      setTimeRemaining(calculateTimeUntil2031());
+      if (mountedRef.current) {
+        setTimeRemaining(calculateTimeUntil2031());
+      }
     }, 1000);
 
-    return () => clearInterval(interval);
+    return () => {
+      mountedRef.current = false;
+      clearInterval(interval);
+    };
   }, []);
 
   const formatTime = (value: number): string => {
     return value.toString().padStart(2, "0");
   };
 
-  // Render placeholder during SSR and before mount
-  if (!mounted || !timeRemaining) {
+  // Render placeholder during SSR
+  if (!timeRemaining) {
     return (
       <p className="text-body tabular-nums">
         --:--:--:-- (till 2031)
