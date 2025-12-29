@@ -1,4 +1,16 @@
-Title
-Summary
+Blog Title
+2025-12-28
+A short summary of what this post is about.
 
-Your content here.
+Your content starts here on line 5. 
+You can use plain text or Markdown.
+Double newlines create new paragraphs.
+
+---
+Tips:
+- Line 1: Title
+- Line 2: Date (YYYY-MM-DD) - Used for sorting and display
+- Line 3: Summary - Shown on the homepage
+- Line 4: (Leave empty)
+- Line 5+: Content - The main body of your post
+- Filename: Should be YYYY-MM-DD-slug.txt (e.g., 2025-12-28-my-post.txt)

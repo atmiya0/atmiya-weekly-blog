@@ -1,4 +1,5 @@
 Colophon
+2025-12-22
 A detailed look at the technology, design decisions, and tools used to build this weekly blog.
 
 This is the colophon—a detailed documentation of everything used to build this blog. Consider it a reference for future self and anyone curious about the technical decisions behind this space.

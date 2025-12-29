@@ -70,48 +70,49 @@ export function getAllWeeks(): WeekPost[] {
         if (isTxt) {
             // Simple TXT format:
             // Line 1: Title
-            // Line 2: Summary (optional, if empty or looks like content, it's fine)
-            // Rest: Content
+            // Line 2: Date (YYYY-MM-DD)
+            // Line 3: Summary
+            // Line 4: (Empty)
+            // Line 5+: Content
             const lines = fileContents.split("\n").map(l => l.trim());
             const title = lines[0] || "Untitled Post";
+            const dateStr = lines[1] || "";
+            const summary = lines[2] || "";
             
-            // If second line is empty, skip it for summary
-            let summary = "";
-            let contentStartLine = 1;
-            
-            if (lines[1] && lines[1].length > 0) {
-                summary = lines[1];
-                contentStartLine = 2;
-            } else if (lines[2] && lines[2].length > 0) {
-                summary = lines[2];
-                contentStartLine = 3;
-            }
-
-            content = lines.slice(contentStartLine).join("\n").trim();
+            // Content starts from line 5 (index 4)
+            content = lines.slice(4).join("\n").trim();
 
             const fileName = path.basename(filePath, ".txt");
             const dateMatch = fileName.match(/^(\d{4}-\d{2}-\d{2})-(.+)$/);
             
-            let startDate: Date;
+            let postDate: Date;
             let slug: string;
 
-            if (dateMatch) {
-                startDate = parseISO(dateMatch[1]);
+            // Try to parse date from line 2 first
+            const parsedLineDate = dateStr ? parseISO(dateStr) : null;
+            const isValidLineDate = parsedLineDate && !isNaN(parsedLineDate.getTime());
+
+            if (isValidLineDate) {
+                postDate = parsedLineDate;
+                slug = dateMatch ? dateMatch[2] : fileName.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+            } else if (dateMatch) {
+                postDate = parseISO(dateMatch[1]);
                 slug = dateMatch[2];
             } else {
                 // Use file creation time (birthtime) or modification time as fallback
-                startDate = fileStats.birthtime || fileStats.mtime;
+                postDate = fileStats.birthtime || fileStats.mtime;
                 slug = fileName.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
             }
 
             // Normalize to the Monday of that week
-            const monday = startOfISOWeek(startDate);
+            const monday = startOfISOWeek(postDate);
             const sunday = endOfISOWeek(monday);
             
             frontmatter = {
                 title,
                 summary: summary || content.substring(0, 150) + "...",
                 slug,
+                date: format(postDate, "yyyy-MM-dd"),
                 startDate: format(monday, "yyyy-MM-dd"),
                 endDate: format(sunday, "yyyy-MM-dd"),
                 week: getISOWeek(monday)
@@ -120,6 +121,11 @@ export function getAllWeeks(): WeekPost[] {
             const { data, content: mdxContent } = matter(fileContents);
             frontmatter = data as WeekFrontmatter;
             content = mdxContent;
+            
+            // If MDX doesn't have a specific date, use startDate
+            if (!frontmatter.date && frontmatter.startDate) {
+                frontmatter.date = frontmatter.startDate;
+            }
         }
 
         const stats = readingTime(content);
@@ -142,11 +148,14 @@ export function getAllWeeks(): WeekPost[] {
             slug: frontmatter.slug,
             title: frontmatter.title,
             week: frontmatter.week || getISOWeek(parseISO(frontmatter.startDate)),
+            date: frontmatter.date || frontmatter.startDate,
             startDate: frontmatter.startDate,
             endDate: frontmatter.endDate,
             summary: frontmatter.summary,
             content,
             readingTime: stats.text,
+            createdAt: frontmatter.createdAt || fileStats.birthtime.toISOString(),
+            updatedAt: frontmatter.updatedAt || fileStats.mtime.toISOString(),
         });
     };
 
@@ -205,8 +214,12 @@ export function getAllWeeks(): WeekPost[] {
         }
     }
 
-    // Return sorted by startDate descending (most recent first)
-    return sortedWeeks.reverse();
+    // Return sorted by date descending (most recent first)
+    return [...allWeeks].sort((a, b) => {
+        const dateCompare = new Date(b.date).getTime() - new Date(a.date).getTime();
+        if (dateCompare !== 0) return dateCompare;
+        return b.slug.localeCompare(a.slug);
+    });
 }
 
 export function getWeekBySlug(slug: string): WeekPost | undefined {
@@ -219,9 +232,9 @@ export function getAdjacentPosts(currentSlug: string): {
     next: WeekPost | undefined;
 } {
     const allWeeks = getAllWeeks();
-    // Sort by startDate ascending (oldest first), then by slug for same-date posts
+    // Sort by date ascending (oldest first)
     const sortedPosts = [...allWeeks].sort((a, b) => {
-        const dateCompare = new Date(a.startDate).getTime() - new Date(b.startDate).getTime();
+        const dateCompare = new Date(a.date).getTime() - new Date(b.date).getTime();
         if (dateCompare !== 0) return dateCompare;
         return a.slug.localeCompare(b.slug);
     });

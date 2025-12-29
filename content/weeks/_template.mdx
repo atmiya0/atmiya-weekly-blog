@@ -1,24 +1,28 @@
-Your Blog Title
-A brief summary (optional)
-
-Write your content here in plain English.
-
-You can use Markdown if you want:
-- **Bold text**
-- *Italic text*
-- [Links](https://example.com)
-
-## Section Headings
-
-But plain text works perfectly too!
-
-Just use double newlines to create new paragraphs.
-
+---
+title: "Blog Title"
+summary: "A short summary of this post."
+date: "2025-12-28"
+startDate: "2025-12-22"
+endDate: "2025-12-28"
+slug: "blog-title"
+createdAt: "2025-12-28T10:00:00Z"
+updatedAt: "2025-12-28T10:00:00Z"
 ---
 
-Tips:
-- Keep it simple
-- Write weekly
-- Ship imperfect
+# Blog Title
 
-See README_WRITING.md for the full guide.
+Write your content here in MDX.
+
+You can use:
+- **Bold**
+- *Italic*
+- [Links](https://example.com)
+- Custom components
+
+---
+Tips:
+- `date`: Specific day of the post (YYYY-MM-DD).
+- `startDate`: The Monday of that week.
+- `endDate`: The Sunday of that week.
+- `slug`: URL path (should match filename without date).
+- `createdAt` / `updatedAt`: Optional ISO timestamps to override file system dates.

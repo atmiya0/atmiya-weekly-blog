@@ -46,12 +46,13 @@ async function createPost() {
     const title = process.argv[2] || "New Weekly Post";
     const summary = process.argv[3] || "Summary of this week's activities.";
 
-    const startDate = getNextMonday();
-    const startDateStr = format(startDate, 'yyyy-MM-dd');
-    const year = format(startDate, 'yyyy');
+    // Use current date for the filename to support multiple posts per week
+    const today = new Date();
+    const dateStr = format(today, 'yyyy-MM-dd');
+    const year = format(today, 'yyyy');
 
     const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
-    const fileName = `${startDateStr}-${slug}.txt`;
+    const fileName = `${dateStr}-${slug}.txt`;
     const yearDir = path.join(CONTENT_DIR, year);
 
     if (!fs.existsSync(yearDir)) {
@@ -61,19 +62,26 @@ async function createPost() {
     const filePath = path.join(yearDir, fileName);
 
     if (fs.existsSync(filePath)) {
-        console.error(`Error: File ${filePath} already exists.`);
-        process.exit(1);
-    }
-
-    const content = `${title}
+        // If file exists, add a timestamp or index to avoid collision
+        const timestamp = Math.floor(Date.now() / 1000);
+        const altFileName = `${dateStr}-${slug}-${timestamp}.txt`;
+        const altFilePath = path.join(yearDir, altFileName);
+        
+        fs.writeFileSync(altFilePath, `${title}\n${dateStr}\n${summary}\n\nWrite your content here.`);
+        console.log(`\n✅ Created new post (with timestamp): ${altFilePath}`);
+    } else {
+        const content = `${title}
+${dateStr}
 ${summary}
 
 Write your content here in plain English.
 No markdown required, but you can use it if you want!
 `;
 
-    fs.writeFileSync(filePath, content);
-    console.log(`\n✅ Created new post: ${filePath}`);
+        fs.writeFileSync(filePath, content);
+        console.log(`\n✅ Created new post: ${filePath}`);
+    }
+    
     console.log(`\nNext steps:`);
     console.log(`1. Open the file and write your blog.`);
     console.log(`2. Run 'npm run dev' to see it live.`);

@@ -8,18 +8,21 @@ I've simplified the process so you can focus on writing in English. You don't ev
     - Name it whatever you want, e.g., `my-amazing-week.txt`.
 2.  **Write your blog**:
     - **Line 1**: Your Title.
-    - **Line 2**: A short summary (optional).
-    - **Line 3+**: Your content.
+    - **Line 2**: The Date (YYYY-MM-DD).
+    - **Line 3**: A short summary.
+    - **Line 4**: (Leave empty).
+    - **Line 5+**: Your content.
 3.  **That's it!** The system will:
-    - Use the file's creation date to figure out which week it belongs to.
+    - Use the date in the filename (e.g., `2025-12-28-post.txt`) to figure out which week it belongs to and its position within that week.
     - Automatically find the Monday and Sunday for that week.
     - Create a URL based on your filename.
 
 ## The "I want a specific date" Way
 
-If you want to write a post for a past week or a specific future week:
-- Name your file starting with the date: `2025-12-29-my-post.txt`.
-- The system will use that date instead of the file's creation date.
+To ensure your posts are sorted correctly (most recent at the top):
+- **Always start your filename with a date**: `YYYY-MM-DD-your-slug.txt`.
+- Posts within the same week are sorted by this date.
+- If you don't provide a date in the filename, the system uses the file's creation date.
 
 ## The "Automation" Way
 

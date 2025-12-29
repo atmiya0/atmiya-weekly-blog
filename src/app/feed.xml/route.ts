@@ -14,7 +14,7 @@ export async function GET() {
       <link>${siteUrl}/week/${week.slug}</link>
       <guid isPermaLink="true">${siteUrl}/week/${week.slug}</guid>
       <description><![CDATA[${week.summary}]]></description>
-      <pubDate>${new Date(week.startDate).toUTCString()}</pubDate>
+      <pubDate>${new Date(week.date).toUTCString()}</pubDate>
     </item>`;
     })
     .join("");

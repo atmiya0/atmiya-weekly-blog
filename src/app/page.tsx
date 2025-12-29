@@ -145,41 +145,48 @@ export default function HomePage() {
                           style={{ height: `calc(100% - 54px)` }}
                         />
                       )}
-                      {weekGroups.map(([startDate, posts]) => (
-                        <div key={startDate} className="relative flex">
-                          {/* Timeline arrow icon */}
-                          <div className="mr-[14px] flex-shrink-0">
-                            <Image
-                              src="/up-arrow.svg"
-                              alt=""
-                              width={18}
-                              height={18}
-                              className="mt-[2px]"
-                            />
-                          </div>
-                          {/* Content */}
-                          <div className="flex flex-col pb-[20px] flex-1">
-                            {/* Week number and dates */}
-                            <p className="text-[14px] leading-[1.5714285714285714em] font-normal opacity-60 mb-[8px]">
-                              Week {getISOWeekNumber(posts[0].startDate)} = {formatDateRange(posts[0].startDate, posts[0].endDate)}
-                            </p>
-                            {/* Blog titles - all posts for this week */}
-                            <div className="flex flex-col gap-[4px]">
-                              {posts.map((post) => (
-                                <Link
-                                  key={post.slug}
-                                  href={`/week/${post.slug}`}
-                                  className="group"
-                                >
-                                  <p className="text-[14px] leading-[1.5714285714285714em] font-normal group-hover:text-[var(--brand)] transition-colors">
-                                    {post.title}
-                                  </p>
-                                </Link>
-                              ))}
+                      {weekGroups.map(([startDate, posts]) => {
+                        // Sort posts within the week by date descending
+                        const sortedPosts = [...posts].sort((a, b) => 
+                          new Date(b.date).getTime() - new Date(a.date).getTime()
+                        );
+
+                        return (
+                          <div key={startDate} className="relative flex">
+                            {/* Timeline arrow icon */}
+                            <div className="mr-[14px] flex-shrink-0">
+                              <Image
+                                src="/up-arrow.svg"
+                                alt=""
+                                width={18}
+                                height={18}
+                                className="mt-[2px]"
+                              />
+                            </div>
+                            {/* Content */}
+                            <div className="flex flex-col pb-[20px] flex-1">
+                              {/* Week number and dates */}
+                              <p className="text-[14px] leading-[1.5714285714285714em] font-normal opacity-60 mb-[8px]">
+                                Week {getISOWeekNumber(sortedPosts[0].startDate)} = {formatDateRange(sortedPosts[0].startDate, sortedPosts[0].endDate)}
+                              </p>
+                              {/* Blog titles - all posts for this week */}
+                              <div className="flex flex-col gap-[4px]">
+                                {sortedPosts.map((post) => (
+                                  <Link
+                                    key={post.slug}
+                                    href={`/week/${post.slug}`}
+                                    className="group"
+                                  >
+                                    <p className="text-[14px] leading-[1.5714285714285714em] font-normal group-hover:text-[var(--brand)] transition-colors">
+                                      {post.title}
+                                    </p>
+                                  </Link>
+                                ))}
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      ))}
+                        );
+                      })}
                     </div>
                   </div>
                 );
