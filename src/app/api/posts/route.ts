@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { isAuthenticated } from "@/lib/auth";
 import { listPosts, savePost, getTemplate } from "@/lib/github";
+import { revalidatePath } from "next/cache";
 
 /**
  * GET /api/posts - List all posts
@@ -12,7 +13,7 @@ export async function GET() {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const posts = await listPosts();
+    const posts = await listPosts({ noCache: true });
     return NextResponse.json({ posts });
   } catch (error) {
     console.error("Failed to list posts:", error);
@@ -68,6 +69,11 @@ export async function POST(request: Request) {
     }
 
     const result = await savePost(slug, postContent);
+
+    // Revalidate paths to update the site instantly in production
+    revalidatePath("/");
+    revalidatePath(`/week/${slug}`);
+    revalidatePath("/feed.xml");
 
     return NextResponse.json({
       success: true,

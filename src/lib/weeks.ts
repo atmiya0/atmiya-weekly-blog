@@ -4,14 +4,12 @@ import matter from "gray-matter";
 import readingTime from "reading-time";
 import { WeekPost, WeekFrontmatter } from "@/types/week";
 import { parseISO, getDay, differenceInDays, getISOWeek, endOfISOWeek, format, startOfISOWeek } from "date-fns";
+import * as github from "./github";
 
 const contentDirectory = path.join(process.cwd(), "content/weeks");
 
 /**
  * Validates that a blog post has correct week dates:
- * - startDate must be a Monday (day 1 in ISO)
- * - endDate must be a Sunday (day 0 in ISO, or 7)
- * - Duration must be exactly 6 days (Monday to Sunday)
  */
 function validateWeekDates(
     fileName: string,
@@ -24,21 +22,18 @@ function validateWeekDates(
         const start = parseISO(startDate);
         const end = parseISO(endDate);
 
-        // Check if startDate is a Monday (getDay: 0=Sun, 1=Mon, etc.)
         const startDay = getDay(start);
         if (startDay !== 1) {
             const dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
             errors.push(`startDate (${startDate}) is a ${dayNames[startDay]}, should be Monday`);
         }
 
-        // Check if endDate is a Sunday
         const endDay = getDay(end);
         if (endDay !== 0) {
             const dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
             errors.push(`endDate (${endDate}) is a ${dayNames[endDay]}, should be Sunday`);
         }
 
-        // Check if duration is exactly 6 days (Mon to Sun)
         const duration = differenceInDays(end, start);
         if (duration !== 6) {
             errors.push(`Duration is ${duration} days, should be 6 days (Monday to Sunday)`);
@@ -51,188 +46,168 @@ function validateWeekDates(
     return { isValid: errors.length === 0, errors };
 }
 
-export function getAllWeeks(): WeekPost[] {
+/**
+ * Normalizes post data into a consistent WeekPost format
+ */
+function normalizePostData(
+    content: string,
+    slug: string,
+    createdAt: string,
+    updatedAt: string,
+    isTxt: boolean
+): WeekPost {
+    let frontmatter: WeekFrontmatter;
+    let postContent: string;
+
+    if (isTxt) {
+        const lines = content.split("\n").map(l => l.trim());
+        const title = lines[0] || "Untitled Post";
+        const dateStr = lines[1] || "";
+        const summary = lines[2] || "";
+
+        // Content starts from line 5 (index 4)
+        postContent = lines.slice(4).join("\n").trim();
+
+        // Parse dates
+        const dates = dateStr.split(",").map(d => d.trim());
+        const startDate = dates[0] || new Date().toISOString().split("T")[0];
+        const endDate = dates[1] || format(endOfISOWeek(parseISO(startDate)), "yyyy-MM-dd");
+
+        // Validate dates
+        const parsedStart = parseISO(startDate);
+        const parsedEnd = parseISO(endDate);
+
+        if (isNaN(parsedStart.getTime()) || isNaN(parsedEnd.getTime())) {
+            console.error(`Invalid date format in content for slug: ${slug}`);
+            throw new Error(`Invalid date format: startDate=${startDate}, endDate=${endDate}`);
+        }
+
+        const postDate = parsedStart;
+        const monday = startOfISOWeek(postDate);
+        const sunday = endOfISOWeek(monday);
+
+        frontmatter = {
+            title,
+            summary: summary || postContent.substring(0, 150) + "...",
+            slug,
+            date: format(postDate, "yyyy-MM-dd"),
+            startDate: format(monday, "yyyy-MM-dd"),
+            endDate: format(sunday, "yyyy-MM-dd"),
+            week: getISOWeek(monday)
+        };
+    } else {
+        const { data, content: mdxContent } = matter(content);
+        frontmatter = data as WeekFrontmatter;
+        postContent = mdxContent;
+
+        if (!frontmatter.date && frontmatter.startDate) {
+            frontmatter.date = frontmatter.startDate;
+        }
+    }
+
+    const stats = readingTime(postContent);
+
+    return {
+        slug: frontmatter.slug || slug,
+        title: frontmatter.title,
+        week: frontmatter.week || getISOWeek(parseISO(frontmatter.startDate)),
+        date: frontmatter.date || frontmatter.startDate,
+        startDate: frontmatter.startDate,
+        endDate: frontmatter.endDate,
+        summary: frontmatter.summary,
+        content: postContent,
+        readingTime: stats.text,
+        createdAt: frontmatter.createdAt || createdAt,
+        updatedAt: frontmatter.updatedAt || updatedAt,
+    };
+}
+
+export async function getAllWeeks(): Promise<WeekPost[]> {
+    // In production, fetch from GitHub API to allow revalidation without redeploy
+    if (process.env.NODE_ENV === "production" && process.env.GITHUB_TOKEN) {
+        try {
+            const posts = await github.listPosts();
+            const fullPosts = await Promise.all(
+                posts.map(async (p) => {
+                    const postData = await github.getPost(p.slug);
+                    if (!postData) return null;
+                    return normalizePostData(
+                        postData.content,
+                        p.slug,
+                        p.date, // Using date from metadata as fallback
+                        p.date,
+                        postData.metadata.path.endsWith(".txt")
+                    );
+                })
+            );
+            return (fullPosts.filter(Boolean) as WeekPost[]).sort((a, b) =>
+                new Date(b.date).getTime() - new Date(a.date).getTime()
+            );
+        } catch (error) {
+            console.error("Failed to fetch posts from GitHub, falling back to FS:", error);
+        }
+    }
+
+    // Local filesystem approach (Development or fallback)
     if (!fs.existsSync(contentDirectory)) {
         return [];
     }
 
     const allWeeks: WeekPost[] = [];
 
-    // Helper function to process MDX or TXT files
     const processFile = (filePath: string, displayName: string) => {
         const fileContents = fs.readFileSync(filePath, "utf8");
         const fileStats = fs.statSync(filePath);
         const isTxt = filePath.endsWith(".txt");
-        
-        let frontmatter: WeekFrontmatter;
-        let content: string;
+        const fileName = path.basename(filePath).replace(/\.(txt|mdx)$/, "");
 
-        if (isTxt) {
-            // Simple TXT format:
-            // Line 1: Title
-            // Line 2: Date (YYYY-MM-DD)
-            // Line 3: Summary
-            // Line 4: (Empty)
-            // Line 5+: Content
-            const lines = fileContents.split("\n").map(l => l.trim());
-            const title = lines[0] || "Untitled Post";
-            const dateStr = lines[1] || "";
-            const summary = lines[2] || "";
-            
-            // Content starts from line 5 (index 4)
-            content = lines.slice(4).join("\n").trim();
+        // Extract slug from filename (e.g., 2025-01-01-my-post -> my-post)
+        const slugMatch = fileName.match(/^\d{4}-\d{2}-\d{2}-(.+)$/);
+        const slug = slugMatch ? slugMatch[1] : fileName;
 
-            const fileName = path.basename(filePath, ".txt");
-            const dateMatch = fileName.match(/^(\d{4}-\d{2}-\d{2})-(.+)$/);
-            
-            let postDate: Date;
-            let slug: string;
+        const post = normalizePostData(
+            fileContents,
+            slug,
+            fileStats.birthtime.toISOString(),
+            fileStats.mtime.toISOString(),
+            isTxt
+        );
 
-            // Try to parse date from line 2 first
-            const parsedLineDate = dateStr ? parseISO(dateStr) : null;
-            const isValidLineDate = parsedLineDate && !isNaN(parsedLineDate.getTime());
-
-            if (isValidLineDate) {
-                postDate = parsedLineDate;
-                slug = dateMatch ? dateMatch[2] : fileName.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
-            } else if (dateMatch) {
-                postDate = parseISO(dateMatch[1]);
-                slug = dateMatch[2];
-            } else {
-                // Use file creation time (birthtime) or modification time as fallback
-                postDate = fileStats.birthtime || fileStats.mtime;
-                slug = fileName.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
-            }
-
-            // Normalize to the Monday of that week
-            const monday = startOfISOWeek(postDate);
-            const sunday = endOfISOWeek(monday);
-            
-            frontmatter = {
-                title,
-                summary: summary || content.substring(0, 150) + "...",
-                slug,
-                date: format(postDate, "yyyy-MM-dd"),
-                startDate: format(monday, "yyyy-MM-dd"),
-                endDate: format(sunday, "yyyy-MM-dd"),
-                week: getISOWeek(monday)
-            };
-        } else {
-            const { data, content: mdxContent } = matter(fileContents);
-            frontmatter = data as WeekFrontmatter;
-            content = mdxContent;
-            
-            // If MDX doesn't have a specific date, use startDate
-            if (!frontmatter.date && frontmatter.startDate) {
-                frontmatter.date = frontmatter.startDate;
-            }
-        }
-
-        const stats = readingTime(content);
-
-        // Validate dates in development
-        if (process.env.NODE_ENV === "development" && frontmatter.startDate && frontmatter.endDate) {
-            const validation = validateWeekDates(
-                displayName,
-                frontmatter.startDate,
-                frontmatter.endDate
-            );
-            if (!validation.isValid) {
-                console.warn(`\n⚠️  Date validation failed for ${displayName}:`);
-                validation.errors.forEach((err) => console.warn(`   - ${err}`));
-                console.warn("");
-            }
-        }
-
-        allWeeks.push({
-            slug: frontmatter.slug,
-            title: frontmatter.title,
-            week: frontmatter.week || getISOWeek(parseISO(frontmatter.startDate)),
-            date: frontmatter.date || frontmatter.startDate,
-            startDate: frontmatter.startDate,
-            endDate: frontmatter.endDate,
-            summary: frontmatter.summary,
-            content,
-            readingTime: stats.text,
-            createdAt: frontmatter.createdAt || fileStats.birthtime.toISOString(),
-            updatedAt: frontmatter.updatedAt || fileStats.mtime.toISOString(),
-        });
+        allWeeks.push(post);
     };
 
-    // Read all entries in the content directory
     const entries = fs.readdirSync(contentDirectory, { withFileTypes: true });
-
     for (const entry of entries) {
         if (entry.isDirectory() && /^\d{4}$/.test(entry.name)) {
-            // Year folder (e.g., 2025, 2026)
             const yearPath = path.join(contentDirectory, entry.name);
             const yearFiles = fs.readdirSync(yearPath);
-
             for (const fileName of yearFiles) {
                 if ((fileName.endsWith(".mdx") || fileName.endsWith(".txt")) && !fileName.startsWith("_")) {
-                    const filePath = path.join(yearPath, fileName);
-                    processFile(filePath, `${entry.name}/${fileName}`);
+                    processFile(path.join(yearPath, fileName), `${entry.name}/${fileName}`);
                 }
             }
         } else if (entry.isFile() && (entry.name.endsWith(".mdx") || entry.name.endsWith(".txt")) && !entry.name.startsWith("_")) {
-            // File in root (backwards compatibility)
-            const filePath = path.join(contentDirectory, entry.name);
-            processFile(filePath, entry.name);
+            processFile(path.join(contentDirectory, entry.name), entry.name);
         }
     }
 
-    // Sort by startDate in ascending order for overlap validation
-    const sortedWeeks = allWeeks.sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime());
-
-    // Validate no overlapping or duplicate weeks (in development)
-    if (process.env.NODE_ENV === "development" && sortedWeeks.length > 1) {
-        for (let i = 1; i < sortedWeeks.length; i++) {
-            const prevWeek = sortedWeeks[i - 1];
-            const currWeek = sortedWeeks[i];
-
-            const prevEnd = new Date(prevWeek.endDate).getTime();
-            const currStart = new Date(currWeek.startDate).getTime();
-            const oneDayMs = 24 * 60 * 60 * 1000;
-
-            // Check if weeks overlap or have gaps (unless they're the same week with multiple posts)
-            if (prevWeek.startDate !== currWeek.startDate) {
-                if (currStart <= prevEnd) {
-                    console.warn(`\n⚠️  Week overlap detected:`);
-                    console.warn(`   - "${prevWeek.title}" ends on ${prevWeek.endDate}`);
-                    console.warn(`   - "${currWeek.title}" starts on ${currWeek.startDate}`);
-                    console.warn(`   - Next week should start the day after previous week ends\n`);
-                } else if (currStart !== prevEnd + oneDayMs) {
-                    // Optional: warn about gaps between weeks
-                    const gapDays = Math.floor((currStart - prevEnd) / oneDayMs) - 1;
-                    if (gapDays > 0) {
-                        console.warn(`\n⚠️  Gap of ${gapDays} day(s) between weeks:`);
-                        console.warn(`   - "${prevWeek.title}" ends on ${prevWeek.endDate}`);
-                        console.warn(`   - "${currWeek.title}" starts on ${currWeek.startDate}\n`);
-                    }
-                }
-            }
-        }
-    }
-
-    // Return sorted by date descending (most recent first)
-    return [...allWeeks].sort((a, b) => {
+    return allWeeks.sort((a, b) => {
         const dateCompare = new Date(b.date).getTime() - new Date(a.date).getTime();
         if (dateCompare !== 0) return dateCompare;
         return b.slug.localeCompare(a.slug);
     });
 }
 
-export function getWeekBySlug(slug: string): WeekPost | undefined {
-    const allWeeks = getAllWeeks();
+export async function getWeekBySlug(slug: string): Promise<WeekPost | undefined> {
+    const allWeeks = await getAllWeeks();
     return allWeeks.find((week) => week.slug === slug);
 }
 
-export function getAdjacentPosts(currentSlug: string): {
+export async function getAdjacentPosts(currentSlug: string): Promise<{
     previous: WeekPost | undefined;
     next: WeekPost | undefined;
-} {
-    const allWeeks = getAllWeeks();
-    // Sort by date ascending (oldest first)
+}> {
+    const allWeeks = await getAllWeeks();
     const sortedPosts = [...allWeeks].sort((a, b) => {
         const dateCompare = new Date(a.date).getTime() - new Date(b.date).getTime();
         if (dateCompare !== 0) return dateCompare;
@@ -247,7 +222,8 @@ export function getAdjacentPosts(currentSlug: string): {
     };
 }
 
-export function getAllSlugs(): string[] {
-    const allWeeks = getAllWeeks();
+export async function getAllSlugs(): Promise<string[]> {
+    const allWeeks = await getAllWeeks();
     return allWeeks.map((week) => week.slug);
 }
+

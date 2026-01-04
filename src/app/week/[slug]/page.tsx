@@ -14,13 +14,13 @@ interface PageProps {
 }
 
 export async function generateStaticParams() {
-    const slugs = getAllSlugs();
+    const slugs = await getAllSlugs();
     return slugs.map((slug) => ({ slug }));
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
     const { slug } = await params;
-    const week = getWeekBySlug(slug);
+    const week = await getWeekBySlug(slug);
 
     if (!week) {
         return {
@@ -49,13 +49,13 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function WeekPage({ params }: PageProps) {
     const { slug } = await params;
-    const week = getWeekBySlug(slug);
+    const week = await getWeekBySlug(slug);
 
     if (!week) {
         notFound();
     }
 
-    const { previous, next } = getAdjacentPosts(week.slug);
+    const { previous, next } = await getAdjacentPosts(week.slug);
 
     return (
         <BlogLayout>

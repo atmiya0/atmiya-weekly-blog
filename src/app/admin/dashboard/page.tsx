@@ -35,7 +35,7 @@ export default async function DashboardPage() {
   let error: string | null = null;
 
   try {
-    posts = await listPosts();
+    posts = await listPosts({ noCache: true });
   } catch (e) {
     error = e instanceof Error ? e.message : "Failed to load posts";
   }

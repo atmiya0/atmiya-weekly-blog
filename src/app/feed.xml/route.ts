@@ -3,7 +3,7 @@ import { getAllWeeks } from "@/lib/weeks";
 export const dynamic = "force-static";
 
 export async function GET() {
-  const weeks = getAllWeeks();
+  const weeks = await getAllWeeks();
   const siteUrl = "https://blogs.atmiya.ca";
 
   const rssItems = weeks

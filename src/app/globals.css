@@ -157,6 +157,16 @@ html {
   scroll-padding-top: 2rem;
 }
 
+::selection {
+  background-color: #000000;
+  color: #ffffff;
+}
+
+::-moz-selection {
+  background-color: #000000;
+  color: #ffffff;
+}
+
 body {
   /* Custom font with system fallback */
   /* When BrunswickGrotesque is added, it will be applied via --font-brunswick variable */

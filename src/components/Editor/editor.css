@@ -129,6 +129,11 @@
 
 /* Selection */
 .tiptap ::selection {
-  background-color: var(--brand);
-  color: white;
+  background-color: #000000;
+  color: #ffffff;
+}
+
+.tiptap ::-moz-selection {
+  background-color: #000000;
+  color: #ffffff;
 }
