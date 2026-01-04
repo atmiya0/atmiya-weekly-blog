@@ -33,16 +33,14 @@ export default function HomePage() {
             Welcome to my blog. I document here.
           </p>
           <p className="text-[14px] leading-[1.5714285714285714em] font-normal">
-            Hey, I&apos;m Atmiya. I&apos;m interested in building systems that balance
-            simplicity and usefulness, working at the intersection of design,
-            product, and engineering.
+            Hey, I&apos;m Atmiya. I&apos;m interested in building systems that balance simplicity
+            and usefulness, working at the intersection of design, product, and engineering.
           </p>
           <p className="text-[14px] leading-[1.5714285714285714em] font-normal">
-            Over the past few years, I&apos;ve worked as a product designer and
-            frontend engineer, designing and building digital products from
-            idea to production. This multidisciplinary background shapes how
-            I approach building products that are clear, scalable, and easy
-            to use, with a strong focus on real users and real outcomes.
+            Over the past few years, I&apos;ve worked as a product designer and frontend engineer,
+            designing and building digital products from idea to production. This multidisciplinary
+            background shapes how I approach building products that are clear, scalable, and easy to
+            use, with a strong focus on real users and real outcomes.
           </p>
           <p className="text-[14px] leading-[1.5714285714285714em] font-normal">
             Find me on{" "}
@@ -73,16 +71,14 @@ export default function HomePage() {
               GitHub
             </a>
             , or feel free to send me an{" "}
-            <a
-              href="mailto:atmiyajadvani09@gmail.com"
-              className="link-underline"
-            >
+            <a href="mailto:atmiyajadvani09@gmail.com" className="link-underline">
               email
             </a>
             .
           </p>
           <p className="text-[14px] leading-[1.5714285714285714em] font-normal">
-            I&apos;m open to full-time roles in Toronto — frontend engineer, design engineer, or similar.
+            I&apos;m open to full-time roles in Toronto — frontend engineer, design engineer, or
+            similar.
           </p>
         </div>
       </section>
@@ -97,14 +93,17 @@ export default function HomePage() {
           ) : (
             (() => {
               // Group posts by year (using endDate so weeks spanning years go to the new year)
-              const postsByYear = weeks.reduce((acc, post) => {
-                const year = new Date(post.endDate).getFullYear().toString();
-                if (!acc[year]) {
-                  acc[year] = [];
-                }
-                acc[year].push(post);
-                return acc;
-              }, {} as Record<string, typeof weeks>);
+              const postsByYear = weeks.reduce(
+                (acc, post) => {
+                  const year = new Date(post.endDate).getFullYear().toString();
+                  if (!acc[year]) {
+                    acc[year] = [];
+                  }
+                  acc[year].push(post);
+                  return acc;
+                },
+                {} as Record<string, typeof weeks>
+              );
 
               // Sort years descending (most recent first)
               const years = Object.keys(postsByYear).sort((a, b) => parseInt(b) - parseInt(a));
@@ -113,17 +112,21 @@ export default function HomePage() {
                 const yearPosts = postsByYear[year];
 
                 // Group posts by week within the year
-                const groupedWeeks = yearPosts.reduce((acc, post) => {
-                  const key = post.startDate;
-                  if (!acc[key]) {
-                    acc[key] = [];
-                  }
-                  acc[key].push(post);
-                  return acc;
-                }, {} as Record<string, typeof weeks>);
+                const groupedWeeks = yearPosts.reduce(
+                  (acc, post) => {
+                    const key = post.startDate;
+                    if (!acc[key]) {
+                      acc[key] = [];
+                    }
+                    acc[key].push(post);
+                    return acc;
+                  },
+                  {} as Record<string, typeof weeks>
+                );
 
-                const weekGroups = Object.entries(groupedWeeks)
-                  .sort(([a], [b]) => new Date(b).getTime() - new Date(a).getTime());
+                const weekGroups = Object.entries(groupedWeeks).sort(
+                  ([a], [b]) => new Date(b).getTime() - new Date(a).getTime()
+                );
 
                 return (
                   <div key={year} className="flex flex-col gap-[27px]">
@@ -159,16 +162,13 @@ export default function HomePage() {
                           <div className="flex flex-col pb-[20px] flex-1">
                             {/* Week number and dates */}
                             <p className="text-[14px] leading-[1.5714285714285714em] font-normal opacity-60 mb-[8px]">
-                              Week {getISOWeekNumber(posts[0].startDate)} = {formatDateRange(posts[0].startDate, posts[0].endDate)}
+                              Week {getISOWeekNumber(posts[0].startDate)} ={" "}
+                              {formatDateRange(posts[0].startDate, posts[0].endDate)}
                             </p>
                             {/* Blog titles - all posts for this week */}
                             <div className="flex flex-col gap-[4px]">
                               {posts.map((post) => (
-                                <Link
-                                  key={post.slug}
-                                  href={`/week/${post.slug}`}
-                                  className="group"
-                                >
+                                <Link key={post.slug} href={`/week/${post.slug}`} className="group">
                                   <p className="text-[14px] leading-[1.5714285714285714em] font-normal group-hover:text-[var(--brand)] transition-colors">
                                     {post.title}
                                   </p>

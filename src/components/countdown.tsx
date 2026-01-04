@@ -15,9 +15,7 @@ function calculateTimeUntil2031(): TimeRemaining {
   const diffTime = Math.max(0, targetDate.getTime() - now.getTime());
 
   const days = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-  const hours = Math.floor(
-    (diffTime % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
-  );
+  const hours = Math.floor((diffTime % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
   const minutes = Math.floor((diffTime % (1000 * 60 * 60)) / (1000 * 60));
   const seconds = Math.floor((diffTime % (1000 * 60)) / 1000);
 
@@ -25,9 +23,7 @@ function calculateTimeUntil2031(): TimeRemaining {
 }
 
 export function Countdown() {
-  const [timeRemaining, setTimeRemaining] = useState<TimeRemaining | null>(
-    null
-  );
+  const [timeRemaining, setTimeRemaining] = useState<TimeRemaining | null>(null);
 
   useEffect(() => {
     // Subscribe to time updates via interval - setState only in callback
@@ -44,17 +40,13 @@ export function Countdown() {
 
   // Render placeholder during SSR
   if (!timeRemaining) {
-    return (
-      <p className="text-body tabular-nums">--:--:--:-- (till 2031)</p>
-    );
+    return <p className="text-body tabular-nums">--:--:--:-- (till 2031)</p>;
   }
 
   return (
     <p className="text-body tabular-nums" suppressHydrationWarning>
-      {timeRemaining.days}:{formatTime(timeRemaining.hours)}:
-      {formatTime(timeRemaining.minutes)}:{formatTime(timeRemaining.seconds)}{" "}
-      (till 2031)
+      {timeRemaining.days}:{formatTime(timeRemaining.hours)}:{formatTime(timeRemaining.minutes)}:
+      {formatTime(timeRemaining.seconds)} (till 2031)
     </p>
   );
 }
-

@@ -26,9 +26,7 @@ export const metadata: Metadata = {
   creator: "Atmiya Jadvani",
   publisher: "Atmiya Jadvani",
   icons: {
-    icon: [
-      { url: "/favicon.svg", type: "image/svg+xml" },
-    ],
+    icon: [{ url: "/favicon.svg", type: "image/svg+xml" }],
     shortcut: "/favicon.svg",
     apple: "/favicon.svg",
   },
@@ -84,9 +82,7 @@ export default function RootLayout({
           />
         )}
       </head>
-      <body
-        className={`${brunswickGrotesque.variable} font-brunswick antialiased min-h-screen`}
-      >
+      <body className={`${brunswickGrotesque.variable} font-brunswick antialiased min-h-screen`}>
         {children}
       </body>
     </html>

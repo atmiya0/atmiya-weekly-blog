@@ -53,13 +53,13 @@ All design values are defined as CSS variables in `:root` for easy global update
 ```css
 :root {
   /* Colors */
-  --background: #FAFAFA;
-  --foreground: #0A0A0A;
+  --background: #fafafa;
+  --foreground: #0a0a0a;
   --brand: #ff4800;
   --muted: #626262;
-  --divider: #E7E7E7;
-  --surface: #F0F0F0;
-  
+  --divider: #e7e7e7;
+  --surface: #f0f0f0;
+
   /* Typography */
   --text-base: 14px;
   --text-lg: 24px;
@@ -98,17 +98,18 @@ Each blog post requires:
 ```yaml
 ---
 title: "Post Title"
-startDate: "YYYY-MM-DD"  # Must be a Monday
-endDate: "YYYY-MM-DD"    # Must be the following Sunday
+startDate: "YYYY-MM-DD" # Must be a Monday
+endDate: "YYYY-MM-DD" # Must be the following Sunday
 summary: "Brief description"
 slug: "url-friendly-slug"
-week: 52  # Optional, calculated dynamically
+week: 52 # Optional, calculated dynamically
 ---
 ```
 
 ### Date Validation
 
 The system enforces strict date rules:
+
 - **startDate** must be a Monday
 - **endDate** must be a Sunday
 - Duration must be exactly 6 days
@@ -167,12 +168,14 @@ The focus is on writing and reading. Everything else is noise.
 ## Dependencies Summary
 
 **Production:**
+
 - next, react, react-dom
 - @mdx-js/loader, @mdx-js/react, @next/mdx
 - date-fns, gray-matter, reading-time
 - next-themes (for future dark mode)
 
 **Development:**
+
 - tailwindcss, @tailwindcss/postcss
 - typescript, eslint, prettier
 - Various type definitions
@@ -183,4 +186,4 @@ Static generation means every page is pre-rendered at build time. No JavaScript 
 
 ---
 
-*Last updated: December 2025*
+_Last updated: December 2025_

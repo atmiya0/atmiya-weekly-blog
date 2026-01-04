@@ -30,6 +30,7 @@ The blog is configured to use **BrunswickGrotesque** as the custom font. Until f
 ### Adding Your Font Files
 
 1. Add your `.woff2` files to `src/fonts/`:
+
    ```
    src/fonts/
    ├── BrunswickGrotesque-Regular.woff2
@@ -74,12 +75,13 @@ Individual blog posts are **intentionally de-indexed** to:
 
 ### Implementation
 
-| Page | Robots Directive | Canonical URL |
-|------|-----------------|---------------|
-| Home (`/`) | `index, follow` | Self |
-| Blog posts (`/week/*`) | `noindex, follow` | Home page |
+| Page                   | Robots Directive  | Canonical URL |
+| ---------------------- | ----------------- | ------------- |
+| Home (`/`)             | `index, follow`   | Self          |
+| Blog posts (`/week/*`) | `noindex, follow` | Home page     |
 
 Additional measures:
+
 - **robots.txt**: Disallows `/week/` paths
 - **sitemap.xml**: Only includes the home page
 - **RSS feed**: Exists for subscribers, not SEO
@@ -102,14 +104,14 @@ slug: "week-02"
 ---
 ```
 
-| Field | Type | Description |
-|-------|------|-------------|
-| `title` | string | The title of the post |
-| `week` | number | Week number (1, 2, 3...) |
-| `startDate` | string | Start of the week (YYYY-MM-DD) |
-| `endDate` | string | End of the week (YYYY-MM-DD) |
-| `summary` | string | Brief summary for listings |
-| `slug` | string | URL-friendly identifier (e.g., "week-01") |
+| Field       | Type   | Description                               |
+| ----------- | ------ | ----------------------------------------- |
+| `title`     | string | The title of the post                     |
+| `week`      | number | Week number (1, 2, 3...)                  |
+| `startDate` | string | Start of the week (YYYY-MM-DD)            |
+| `endDate`   | string | End of the week (YYYY-MM-DD)              |
+| `summary`   | string | Brief summary for listings                |
+| `slug`      | string | URL-friendly identifier (e.g., "week-01") |
 
 ---
 
@@ -200,8 +202,9 @@ The blog includes a password-protected admin panel for managing posts from anywh
    - Copy the token
 
 2. **Set Environment Variables:**
-   
+
    In Vercel (or your `.env.local` for local dev):
+
    ```
    ADMIN_PASSWORD=your-secure-password
    GITHUB_TOKEN=ghp_your_token_here
@@ -228,11 +231,11 @@ The blog is deployed on Vercel with server-side rendering for the admin panel. P
 
 ### Environment Variables for Vercel
 
-| Variable | Description |
-|----------|-------------|
-| `ADMIN_PASSWORD` | Password for admin access |
-| `GITHUB_TOKEN` | GitHub PAT with `repo` scope |
-| `GITHUB_REPO` | Format: `username/repo-name` |
+| Variable         | Description                  |
+| ---------------- | ---------------------------- |
+| `ADMIN_PASSWORD` | Password for admin access    |
+| `GITHUB_TOKEN`   | GitHub PAT with `repo` scope |
+| `GITHUB_REPO`    | Format: `username/repo-name` |
 
 ---
 
