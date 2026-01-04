@@ -15,7 +15,9 @@ function calculateTimeUntil2031(): TimeRemaining {
   const diffTime = Math.max(0, targetDate.getTime() - now.getTime());
 
   const days = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-  const hours = Math.floor((diffTime % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+  const hours = Math.floor(
+    (diffTime % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+  );
   const minutes = Math.floor((diffTime % (1000 * 60 * 60)) / (1000 * 60));
   const seconds = Math.floor((diffTime % (1000 * 60)) / 1000);
 
@@ -23,20 +25,15 @@ function calculateTimeUntil2031(): TimeRemaining {
 }
 
 export function Countdown() {
-  // Start with null to ensure server and client render the same initial value
-  const [timeRemaining, setTimeRemaining] = useState<TimeRemaining | null>(null);
-  const [mounted, setMounted] = useState(false);
+  const [timeRemaining, setTimeRemaining] = useState<TimeRemaining | null>(
+    null
+  );
 
   useEffect(() => {
-    // Set mounted to true after hydration
-    setMounted(true);
-    // Calculate and set the initial time
-    setTimeRemaining(calculateTimeUntil2031());
-
-    // Update every second to show the countdown ticking
+    // Subscribe to time updates via interval - setState only in callback
     const interval = setInterval(() => {
       setTimeRemaining(calculateTimeUntil2031());
-    }, 1000); // 1000ms = 1 second
+    }, 100); // Start quickly, then every 100ms for smooth updates
 
     return () => clearInterval(interval);
   }, []);
@@ -45,18 +42,18 @@ export function Countdown() {
     return value.toString().padStart(2, "0");
   };
 
-  // Render placeholder during SSR and initial hydration
-  if (!mounted || !timeRemaining) {
+  // Render placeholder during SSR
+  if (!timeRemaining) {
     return (
-      <p className="text-body tabular-nums">
-        --:--:--:-- (till 2031)
-      </p>
+      <p className="text-body tabular-nums">--:--:--:-- (till 2031)</p>
     );
   }
 
   return (
     <p className="text-body tabular-nums" suppressHydrationWarning>
-      {timeRemaining.days}:{formatTime(timeRemaining.hours)}:{formatTime(timeRemaining.minutes)}:{formatTime(timeRemaining.seconds)} (till 2031)
+      {timeRemaining.days}:{formatTime(timeRemaining.hours)}:
+      {formatTime(timeRemaining.minutes)}:{formatTime(timeRemaining.seconds)}{" "}
+      (till 2031)
     </p>
   );
 }

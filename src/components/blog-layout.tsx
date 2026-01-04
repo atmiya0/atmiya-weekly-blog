@@ -12,7 +12,7 @@ export function BlogLayout({ children }: BlogLayoutProps) {
             {/* Two Column Layout Container */}
             <div className="flex flex-col lg:flex-row lg:h-screen">
                 {/* Left Column - Fixed on desktop, normal flow on mobile */}
-                <aside className="bg-[var(--background)] lg:fixed lg:left-0 lg:top-0 lg:h-screen lg:w-[400px] xl:w-[450px] flex-shrink-0 p-6 pt-12 lg:p-12 lg:pt-[53px] lg:pl-[64px]">
+                <aside className="bg-[#fafafa] lg:fixed lg:left-0 lg:top-0 lg:h-screen lg:w-[400px] xl:w-[450px] flex-shrink-0 p-6 pt-12 lg:p-12 lg:pt-[53px] lg:pl-[64px]">
                     <header className="flex items-center gap-4">
                         <Link href="/" className="w-12 h-12 rounded-full border border-[var(--divider)] overflow-hidden flex-shrink-0">
                             <Image

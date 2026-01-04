@@ -33,12 +33,12 @@ export default function HomePage() {
             Welcome to my blog. I document here.
           </p>
           <p className="text-[14px] leading-[1.5714285714285714em] font-normal">
-            Hey, I'm Atmiya. I'm interested in building systems that balance
+            Hey, I&apos;m Atmiya. I&apos;m interested in building systems that balance
             simplicity and usefulness, working at the intersection of design,
             product, and engineering.
           </p>
           <p className="text-[14px] leading-[1.5714285714285714em] font-normal">
-            Over the past few years, I've worked as a product designer and
+            Over the past few years, I&apos;ve worked as a product designer and
             frontend engineer, designing and building digital products from
             idea to production. This multidisciplinary background shapes how
             I approach building products that are clear, scalable, and easy
@@ -82,7 +82,7 @@ export default function HomePage() {
             .
           </p>
           <p className="text-[14px] leading-[1.5714285714285714em] font-normal">
-            I'm open to full-time roles in Toronto — frontend engineer, design engineer, or similar.
+            I&apos;m open to full-time roles in Toronto — frontend engineer, design engineer, or similar.
           </p>
         </div>
       </section>

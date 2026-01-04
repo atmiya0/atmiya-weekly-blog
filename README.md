@@ -188,9 +188,51 @@ npm run format
 
 ---
 
+## Admin Panel
+
+The blog includes a password-protected admin panel for managing posts from anywhere.
+
+### Setup
+
+1. **Create a GitHub Personal Access Token:**
+   - Go to [GitHub Settings → Tokens](https://github.com/settings/tokens)
+   - Generate a new token (classic) with `repo` scope
+   - Copy the token
+
+2. **Set Environment Variables:**
+   
+   In Vercel (or your `.env.local` for local dev):
+   ```
+   ADMIN_PASSWORD=your-secure-password
+   GITHUB_TOKEN=ghp_your_token_here
+   GITHUB_REPO=your-username/your-repo-name
+   ```
+
+3. **Access the Admin Panel:**
+   - Visit `/admin` on your deployed site
+   - Enter your admin password
+   - Create, edit, and delete posts from the dashboard
+
+### Security
+
+- All admin routes are password-protected
+- Sessions use HTTP-only secure cookies
+- GitHub token is never exposed to the client
+- Posts are committed directly to your repository
+
+---
+
 ## Deployment
 
-The blog uses static export (`output: 'export'`). Push to `main` branch and Vercel automatically builds and deploys.
+The blog is deployed on Vercel with server-side rendering for the admin panel. Push to `main` branch and Vercel automatically builds and deploys.
+
+### Environment Variables for Vercel
+
+| Variable | Description |
+|----------|-------------|
+| `ADMIN_PASSWORD` | Password for admin access |
+| `GITHUB_TOKEN` | GitHub PAT with `repo` scope |
+| `GITHUB_REPO` | Format: `username/repo-name` |
 
 ---
 

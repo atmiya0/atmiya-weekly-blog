@@ -91,6 +91,61 @@ export function getAllWeeks(): WeekPost[] {
         });
     };
 
+    // Helper function to process TXT files (from admin panel)
+    const processTxtFile = (filePath: string, displayName: string) => {
+        const content = fs.readFileSync(filePath, "utf8");
+        const lines = content.split("\n");
+
+        if (lines.length < 5) {
+            console.warn(`⚠️  Invalid TXT format for ${displayName}`);
+            return;
+        }
+
+        const title = lines[0].trim();
+        const dateRange = lines[1].trim(); // Expecting YYYY-MM-DD OR YYYY-MM-DD,YYYY-MM-DD
+        const summary = lines[2].trim();
+        const postContent = lines.slice(4).join("\n");
+
+        let startDate = dateRange;
+        let endDate = dateRange;
+
+        if (dateRange.includes(",")) {
+            const parts = dateRange.split(",");
+            startDate = parts[0].trim();
+            endDate = parts[1].trim();
+        }
+
+        const stats = readingTime(postContent);
+        const fileName = path.basename(filePath).replace(/\.txt$/, "");
+        const slugMatch = fileName.match(/^\d{4}-\d{2}-\d{2}-(.+)$/);
+        const slug = slugMatch ? slugMatch[1] : fileName;
+
+        // Validate dates in development
+        if (process.env.NODE_ENV === "development") {
+            const validation = validateWeekDates(
+                displayName,
+                startDate,
+                endDate
+            );
+            if (!validation.isValid) {
+                console.warn(`\n⚠️  Date validation failed for ${displayName}:`);
+                validation.errors.forEach((err) => console.warn(`   - ${err}`));
+                console.warn("");
+            }
+        }
+
+        allWeeks.push({
+            slug,
+            title,
+            week: getISOWeek(parseISO(startDate)),
+            startDate,
+            endDate,
+            summary,
+            content: postContent,
+            readingTime: stats.text,
+        });
+    };
+
     // Read all entries in the content directory
     const entries = fs.readdirSync(contentDirectory, { withFileTypes: true });
 
@@ -101,15 +156,20 @@ export function getAllWeeks(): WeekPost[] {
             const yearFiles = fs.readdirSync(yearPath);
 
             for (const fileName of yearFiles) {
-                if (fileName.endsWith(".mdx") && !fileName.startsWith("_")) {
-                    const filePath = path.join(yearPath, fileName);
-                    processMdxFile(filePath, `${entry.name}/${fileName}`);
+                if (!fileName.startsWith("_")) {
+                    if (fileName.endsWith(".mdx")) {
+                        processMdxFile(path.join(yearPath, fileName), `${entry.name}/${fileName}`);
+                    } else if (fileName.endsWith(".txt")) {
+                        processTxtFile(path.join(yearPath, fileName), `${entry.name}/${fileName}`);
+                    }
                 }
             }
-        } else if (entry.isFile() && entry.name.endsWith(".mdx") && !entry.name.startsWith("_")) {
-            // MDX file in root (backwards compatibility)
-            const filePath = path.join(contentDirectory, entry.name);
-            processMdxFile(filePath, entry.name);
+        } else if (entry.isFile() && !entry.name.startsWith("_")) {
+            if (entry.name.endsWith(".mdx")) {
+                processMdxFile(path.join(contentDirectory, entry.name), entry.name);
+            } else if (entry.name.endsWith(".txt")) {
+                processTxtFile(path.join(contentDirectory, entry.name), entry.name);
+            }
         }
     }
 
