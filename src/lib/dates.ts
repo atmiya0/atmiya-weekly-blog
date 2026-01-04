@@ -1,8 +1,15 @@
 import { format, parseISO, getISOWeek } from "date-fns";
 
 export function formatDate(dateString: string): string {
-  const date = parseISO(dateString);
-  return format(date, "MMM d, yyyy");
+  try {
+    const date = parseISO(dateString);
+    if (isNaN(date.getTime())) {
+      return dateString; // Return original if invalid
+    }
+    return format(date, "MMM d, yyyy");
+  } catch {
+    return dateString; // Return original if parsing fails
+  }
 }
 
 export function formatDateRange(startDate: string, endDate: string): string {

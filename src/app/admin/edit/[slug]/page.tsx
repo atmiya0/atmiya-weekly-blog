@@ -26,7 +26,7 @@ export default async function EditPostPage({ params }: EditPostPageProps) {
   }
 
   const { slug } = await params;
-  const post = await getPost(slug);
+  const post = await getPost(slug, { noCache: true });
 
   if (!post) {
     notFound();
@@ -45,8 +45,7 @@ export default async function EditPostPage({ params }: EditPostPageProps) {
       <AdminHeader />
       <main className="container mx-auto px-4 py-8 max-w-4xl">
         <div className="mb-8">
-          <h1 className="text-title">Edit Post</h1>
-          <p className="text-muted-foreground text-sm mt-1">Editing: {title}</p>
+          <h1 className="text-title">Editing: {title}</h1>
         </div>
         <EditPostForm
           slug={slug}

@@ -21,8 +21,8 @@ export const metadata: Metadata = {
   },
 };
 
-export default function HomePage() {
-  const weeks = getAllWeeks();
+export default async function HomePage() {
+  const weeks = await getAllWeeks();
 
   return (
     <BlogLayout>
@@ -147,7 +147,7 @@ export default function HomePage() {
                       )}
                       {weekGroups.map(([startDate, posts]) => {
                         // Sort posts within the week by date descending
-                        const sortedPosts = [...posts].sort((a, b) => 
+                        const sortedPosts = [...posts].sort((a, b) =>
                           new Date(b.date).getTime() - new Date(a.date).getTime()
                         );
 

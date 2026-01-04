@@ -60,14 +60,17 @@ function getHeaders() {
 /**
  * List all blog posts from the content/weeks directory
  */
-export async function listPosts(): Promise<PostMetadata[]> {
+export async function listPosts(options: { noCache?: boolean } = {}): Promise<PostMetadata[]> {
   const { owner, repo } = getGitHubConfig();
   const posts: PostMetadata[] = [];
 
   // Get year directories
   const yearsResponse = await fetch(
     `${GITHUB_API_BASE}/repos/${owner}/${repo}/contents/content/weeks`,
-    { headers: getHeaders(), cache: "no-store" }
+    {
+      headers: getHeaders(),
+      ...(options.noCache ? { cache: "no-store" } : { next: { revalidate: 3600 } })
+    }
   );
 
   if (!yearsResponse.ok) {
@@ -89,7 +92,7 @@ export async function listPosts(): Promise<PostMetadata[]> {
     // Fetch file content to get metadata
     const contentResponse = await fetch(file.url, {
       headers: getHeaders(),
-      cache: "no-store",
+      ...(options.noCache ? { cache: "no-store" } : { next: { revalidate: 3600 } })
     });
 
     if (!contentResponse.ok) return;
@@ -100,12 +103,14 @@ export async function listPosts(): Promise<PostMetadata[]> {
     // Parse format
     const lines = content.split("\n").map((l) => l.trim());
     const title = lines[0] || "Untitled";
-    const date = lines[1] || "";
+    const dateLine = lines[1] || "";
+    // Handle multiple dates (comma separated), use the first one for sorting
+    const date = dateLine.split(",")[0].trim();
     const summary = lines[2] || "";
 
-    // Extract slug from filename
+    // Extract slug from filename (handle complex names like DATE,DATE-slug)
     const fileName = file.name.replace(/\.(txt|mdx)$/, "");
-    const slugMatch = fileName.match(/^\d{4}-\d{2}-\d{2}-(.+)$/);
+    const slugMatch = fileName.match(/^(?:\d{4}-\d{2}-\d{2}|,|-)+-(.+)$/);
     const slug = slugMatch ? slugMatch[1] : fileName;
 
     posts.push({
@@ -123,9 +128,13 @@ export async function listPosts(): Promise<PostMetadata[]> {
 
     if (item.type === "dir") {
       // Get files in directory
+      const encodedItemPath = encodeURI(item.path);
       const filesResponse = await fetch(
-        `${GITHUB_API_BASE}/repos/${owner}/${repo}/contents/${item.path}`,
-        { headers: getHeaders(), cache: "no-store" }
+        `${GITHUB_API_BASE}/repos/${owner}/${repo}/contents/${encodedItemPath}`,
+        {
+          headers: getHeaders(),
+          ...(options.noCache ? { cache: "no-store" } : { next: { revalidate: 3600 } })
+        }
       );
 
       if (filesResponse.ok) {
@@ -140,26 +149,37 @@ export async function listPosts(): Promise<PostMetadata[]> {
     }
   }
 
-  // Sort by date descending
-  return posts.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+  // Sort by date descending, handle invalid dates safely
+  return posts.sort((a, b) => {
+    const timeA = new Date(a.date).getTime();
+    const timeB = new Date(b.date).getTime();
+    if (isNaN(timeA) && isNaN(timeB)) return 0;
+    if (isNaN(timeA)) return 1;
+    if (isNaN(timeB)) return -1;
+    return timeB - timeA;
+  });
 }
 
 /**
  * Get a single post by its slug
  */
-export async function getPost(slug: string): Promise<{
+export async function getPost(
+  slug: string,
+  options: { noCache?: boolean } = {}
+): Promise<{
   content: string;
   metadata: PostMetadata;
 } | null> {
-  const posts = await listPosts();
+  const posts = await listPosts(options);
   const post = posts.find((p) => p.slug === slug);
 
   if (!post) return null;
 
   const { owner, repo } = getGitHubConfig();
-  const response = await fetch(`${GITHUB_API_BASE}/repos/${owner}/${repo}/contents/${post.path}`, {
+  const encodedPath = encodeURI(post.path);
+  const response = await fetch(`${GITHUB_API_BASE}/repos/${owner}/${repo}/contents/${encodedPath}`, {
     headers: getHeaders(),
-    cache: "no-store",
+    next: { revalidate: 3600 }
   });
 
   if (!response.ok) return null;
@@ -189,7 +209,7 @@ export async function savePost(
 
   if (sha) {
     // Find existing file path
-    const posts = await listPosts();
+    const posts = await listPosts({ noCache: true });
     const existingPost = posts.find((p) => p.slug === slug);
     if (!existingPost) {
       throw new Error(`Post with slug "${slug}" not found`);
@@ -214,7 +234,8 @@ export async function savePost(
     body.sha = sha;
   }
 
-  const response = await fetch(`${GITHUB_API_BASE}/repos/${owner}/${repo}/contents/${path}`, {
+  const encodedPath = encodeURI(path);
+  const response = await fetch(`${GITHUB_API_BASE}/repos/${owner}/${repo}/contents/${encodedPath}`, {
     method: "PUT",
     headers: getHeaders(),
     body: JSON.stringify(body),
@@ -234,14 +255,15 @@ export async function savePost(
 export async function deletePost(slug: string, sha: string): Promise<{ success: boolean }> {
   const { owner, repo } = getGitHubConfig();
 
-  const posts = await listPosts();
+  const posts = await listPosts({ noCache: true });
   const post = posts.find((p) => p.slug === slug);
 
   if (!post) {
     throw new Error(`Post with slug "${slug}" not found`);
   }
 
-  const response = await fetch(`${GITHUB_API_BASE}/repos/${owner}/${repo}/contents/${post.path}`, {
+  const encodedPath = encodeURI(post.path);
+  const response = await fetch(`${GITHUB_API_BASE}/repos/${owner}/${repo}/contents/${encodedPath}`, {
     method: "DELETE",
     headers: getHeaders(),
     body: JSON.stringify({
@@ -266,7 +288,7 @@ export async function getTemplate(): Promise<string> {
 
   const response = await fetch(
     `${GITHUB_API_BASE}/repos/${owner}/${repo}/contents/content/weeks/_template.txt`,
-    { headers: getHeaders(), cache: "no-store" }
+    { headers: getHeaders(), next: { revalidate: 3600 } }
   );
 
   if (!response.ok) {

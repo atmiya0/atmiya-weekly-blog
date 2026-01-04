@@ -45,7 +45,7 @@ export function TiptapEditor({
     immediatelyRender: false, // Prevents SSR hydration mismatch
     editorProps: {
       attributes: {
-        class: "tiptap focus:outline-none min-h-[400px] p-4",
+        class: "tiptap focus:outline-none h-[350px] overflow-y-auto p-4",
       },
     },
     onUpdate: ({ editor }) => {
@@ -56,7 +56,7 @@ export function TiptapEditor({
 
   if (!editor) {
     return (
-      <div className="border border-border rounded-lg p-4 min-h-[400px] bg-card animate-pulse" />
+      <div className="border border-border rounded-lg p-4 h-[350px] bg-card animate-pulse" />
     );
   }
 

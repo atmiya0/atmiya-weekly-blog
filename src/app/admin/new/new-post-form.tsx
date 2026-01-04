@@ -15,7 +15,7 @@ const TiptapEditor = dynamic(
   {
     ssr: false,
     loading: () => (
-      <div className="border border-border rounded-lg p-4 min-h-[400px] bg-card animate-pulse" />
+      <div className="border border-border rounded-lg p-4 h-[350px] bg-card animate-pulse" />
     ),
   }
 );
@@ -90,65 +90,60 @@ ${content}`;
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      {/* Metadata Card */}
-      <Card>
-        <CardContent className="pt-6 space-y-4">
+      {/* Metadata Fields */}
+      <div className="space-y-4">
+        <div className="space-y-2">
+          <Label htmlFor="title">Title</Label>
+          <Input
+            id="title"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            placeholder="Post title"
+            required
+          />
+          {title && (
+            <p className="text-xs text-muted-foreground">Slug: {generateSlug(title) || "..."}</p>
+          )}
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Label htmlFor="title">Title</Label>
+            <Label htmlFor="startDate">Start Date (Monday)</Label>
             <Input
-              id="title"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              placeholder="Post title"
+              id="startDate"
+              type="date"
+              value={startDate}
+              onChange={(e) => setStartDate(e.target.value)}
               required
             />
-            {title && (
-              <p className="text-xs text-muted-foreground">Slug: {generateSlug(title) || "..."}</p>
-            )}
           </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="startDate">Start Date (Monday)</Label>
-              <Input
-                id="startDate"
-                type="date"
-                value={startDate}
-                onChange={(e) => setStartDate(e.target.value)}
-                required
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="endDate">End Date (Sunday)</Label>
-              <Input
-                id="endDate"
-                type="date"
-                value={endDate}
-                onChange={(e) => setEndDate(e.target.value)}
-                required
-              />
-            </div>
+          <div className="space-y-2">
+            <Label htmlFor="endDate">End Date (Sunday)</Label>
+            <Input
+              id="endDate"
+              type="date"
+              value={endDate}
+              onChange={(e) => setEndDate(e.target.value)}
+              required
+            />
           </div>
-        </CardContent>
-      </Card>
-
-      <Separator />
+        </div>
+      </div>
 
       {/* Editor */}
       <div className="space-y-2">
-        <Label>Content</Label>
         <TiptapEditor content="" onChange={setContent} placeholder="Start writing your post..." />
       </div>
 
       {error && <p className="text-sm text-destructive">{error}</p>}
 
       {/* Actions */}
-      <div className="flex items-center gap-4">
-        <Button type="submit" disabled={isLoading || !title}>
-          {isLoading ? "Creating..." : "Create Post"}
-        </Button>
+      <div className="flex items-center justify-end gap-4">
         <Button type="button" variant="outline" onClick={() => router.push("/admin/dashboard")}>
           Cancel
+        </Button>
+        <Button type="submit" disabled={isLoading || !title}>
+          {isLoading ? "Creating..." : "Create Post"}
         </Button>
       </div>
     </form>
