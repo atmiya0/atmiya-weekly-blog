@@ -1,40 +1,5 @@
-How I Write These Weekly Updates
-2025-12-27
-The simple approach behind documenting life one week at a time.
+How i write these weekly updates
+2025-12-27,2025-12-27
 
-Writing weekly updates started as an experiment. Could I document my journey consistently, without overcomplicating things? Here's what I've learned about making it work.
 
-## Keep It Simple
-
-The best blog post is the one that gets published. I write in plain text—no fancy formatting required. Just thoughts, organized by week.
-
-Each post follows a loose structure:
-- What happened this week
-- What I learned
-- What's coming next
-
-That's it. No templates to fill out, no rigid formats. Just writing.
-
-## Write for Yourself First
-
-These posts aren't written for an audience. They're written for future me—a record of decisions made, lessons learned, and progress documented. If someone else finds value in them, that's a bonus.
-
-The goal is honest documentation, not performance. Some weeks are full of wins. Some weeks are full of struggle. Both are worth recording.
-
-## Consistency Over Perfection
-
-A short, imperfect post published on time beats a long, polished post that never ships. I aim to write something every week, even if it's just a few paragraphs.
-
-The magic is in the accumulation. One weekly post doesn't mean much. Fifty-two of them tell a story.
-
-## The Tools Don't Matter
-
-I could use any blogging platform, but I chose something minimal. Plain text files, version controlled, automatically published. No distractions, no features I don't need.
-
-The constraint is the feature. When there's nothing to configure, there's nothing to do except write.
-
-## Looking Forward
-
-This blog is a supporting property—evidence of showing up, week after week. Not every post will be insightful. Not every week will be eventful. But the act of documenting it all? That compounds over time.
-
-One week at a time.
+<p>Writing weekly updates started as an experiment. Could I document my journey consistently, without overcomplicating things? Here's what I've learned about making it work.</p><p>## Keep It Simple</p><p>The best blog post is the one that gets published. I write in plain text—no fancy formatting required. Just thoughts, organized by week.</p><p>Each post follows a loose structure:<br />- What happened this week<br />- What I learned<br />- What's coming next</p><p>That's it. No templates to fill out, no rigid formats. Just writing.</p><p>## Write for Yourself First</p><p>These posts aren't written for an audience. They're written for future me—a record of decisions made, lessons learned, and progress documented. If someone else finds value in them, that's a bonus.</p><p>The goal is honest documentation, not performance. Some weeks are full of wins. Some weeks are full of struggle. Both are worth recording.</p><p>## Consistency Over Perfection</p><p>A short, imperfect post published on time beats a long, polished post that never ships. I aim to write something every week, even if it's just a few paragraphs.</p><p>The magic is in the accumulation. One weekly post doesn't mean much. Fifty-two of them tell a story.</p><p>## The Tools Don't Matter</p><p>I could use any blogging platform, but I chose something minimal. Plain text files, version controlled, automatically published. No distractions, no features I don't need.</p><p>The constraint is the feature. When there's nothing to configure, there's nothing to do except write.</p><p>## Looking Forward</p><p>This blog is a supporting property—evidence of showing up, week after week. Not every post will be insightful. Not every week will be eventful. But the act of documenting it all? That compounds over time.</p><p>One week at a time.</p>
