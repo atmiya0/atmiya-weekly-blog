@@ -6,8 +6,6 @@ import dynamic from "next/dynamic";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
 import {
   Dialog,
   DialogContent,
@@ -62,7 +60,7 @@ export function EditPostForm({
   // Content (HTML from editor, initialized with plain text converted to paragraphs)
   const initialHtml = initialContent
     .split("\n\n")
-    .map((p) => `<p>${p.replace(/\n/g, "<br>")}</p>`)
+    .map((p) => `<p>${p.replace(/\n/g, "<br />")}</p>`)
     .join("");
   const [content, setContent] = useState(initialHtml);
 

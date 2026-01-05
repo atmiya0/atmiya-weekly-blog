@@ -1,50 +1,8 @@
-import fs from "fs";
-import path from "path";
-import matter from "gray-matter";
 import readingTime from "reading-time";
+import matter from "gray-matter";
 import { WeekPost, WeekFrontmatter } from "@/types/week";
-import { parseISO, getDay, differenceInDays, getISOWeek, endOfISOWeek, format, startOfISOWeek } from "date-fns";
+import { parseISO, getISOWeek, endOfISOWeek, format, startOfISOWeek } from "date-fns";
 import * as github from "./github";
-
-const contentDirectory = path.join(process.cwd(), "content/weeks");
-
-/**
- * Validates that a blog post has correct week dates:
- */
-function validateWeekDates(
-    fileName: string,
-    startDate: string,
-    endDate: string
-): { isValid: boolean; errors: string[] } {
-    const errors: string[] = [];
-
-    try {
-        const start = parseISO(startDate);
-        const end = parseISO(endDate);
-
-        const startDay = getDay(start);
-        if (startDay !== 1) {
-            const dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-            errors.push(`startDate (${startDate}) is a ${dayNames[startDay]}, should be Monday`);
-        }
-
-        const endDay = getDay(end);
-        if (endDay !== 0) {
-            const dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-            errors.push(`endDate (${endDate}) is a ${dayNames[endDay]}, should be Sunday`);
-        }
-
-        const duration = differenceInDays(end, start);
-        if (duration !== 6) {
-            errors.push(`Duration is ${duration} days, should be 6 days (Monday to Sunday)`);
-        }
-
-    } catch {
-        errors.push(`Invalid date format in ${fileName}`);
-    }
-
-    return { isValid: errors.length === 0, errors };
-}
 
 /**
  * Normalizes post data into a consistent WeekPost format
@@ -122,80 +80,33 @@ function normalizePostData(
     };
 }
 
+/**
+ * Get all blog posts from GitHub
+ */
 export async function getAllWeeks(): Promise<WeekPost[]> {
-    // In production, fetch from GitHub API to allow revalidation without redeploy
-    if (process.env.NODE_ENV === "production" && process.env.GITHUB_TOKEN) {
-        try {
-            const posts = await github.listPosts();
-            const fullPosts = await Promise.all(
-                posts.map(async (p) => {
-                    const postData = await github.getPost(p.slug);
-                    if (!postData) return null;
-                    return normalizePostData(
-                        postData.content,
-                        p.slug,
-                        p.date, // Using date from metadata as fallback
-                        p.date,
-                        postData.metadata.path.endsWith(".txt")
-                    );
-                })
-            );
-            return (fullPosts.filter(Boolean) as WeekPost[]).sort((a, b) =>
-                new Date(b.date).getTime() - new Date(a.date).getTime()
-            );
-        } catch (error) {
-            console.error("Failed to fetch posts from GitHub, falling back to FS:", error);
-        }
-    }
-
-    // Local filesystem approach (Development or fallback)
-    if (!fs.existsSync(contentDirectory)) {
+    if (!process.env.GITHUB_TOKEN) {
+        console.error("GITHUB_TOKEN is required to fetch posts");
         return [];
     }
 
-    const allWeeks: WeekPost[] = [];
+    const posts = await github.listPosts();
+    const fullPosts = await Promise.all(
+        posts.map(async (p) => {
+            const postData = await github.getPost(p.slug);
+            if (!postData) return null;
+            return normalizePostData(
+                postData.content,
+                p.slug,
+                p.date,
+                p.date,
+                postData.metadata.path.endsWith(".txt")
+            );
+        })
+    );
 
-    const processFile = (filePath: string, displayName: string) => {
-        const fileContents = fs.readFileSync(filePath, "utf8");
-        const fileStats = fs.statSync(filePath);
-        const isTxt = filePath.endsWith(".txt");
-        const fileName = path.basename(filePath).replace(/\.(txt|mdx)$/, "");
-
-        // Extract slug from filename (e.g., 2025-01-01-my-post -> my-post)
-        const slugMatch = fileName.match(/^\d{4}-\d{2}-\d{2}-(.+)$/);
-        const slug = slugMatch ? slugMatch[1] : fileName;
-
-        const post = normalizePostData(
-            fileContents,
-            slug,
-            fileStats.birthtime.toISOString(),
-            fileStats.mtime.toISOString(),
-            isTxt
-        );
-
-        allWeeks.push(post);
-    };
-
-    const entries = fs.readdirSync(contentDirectory, { withFileTypes: true });
-    for (const entry of entries) {
-        if (entry.isDirectory() && /^\d{4}$/.test(entry.name)) {
-            const yearPath = path.join(contentDirectory, entry.name);
-            const yearFiles = fs.readdirSync(yearPath);
-            for (const fileName of yearFiles) {
-                if ((fileName.endsWith(".mdx") || fileName.endsWith(".txt")) && !fileName.startsWith("_")) {
-                    processFile(path.join(yearPath, fileName), `${entry.name}/${fileName}`);
-                }
-            }
-        } else if (entry.isFile() && (entry.name.endsWith(".mdx") || entry.name.endsWith(".txt")) && !entry.name.startsWith("_")) {
-            processFile(path.join(contentDirectory, entry.name), entry.name);
-        }
-    }
-
-    return allWeeks.sort((a, b) => {
-        const dateCompare = new Date(b.date).getTime() - new Date(a.date).getTime();
-        if (dateCompare !== 0) return dateCompare;
-        return b.slug.localeCompare(a.slug);
-    });
+    return (fullPosts.filter(Boolean) as WeekPost[]).sort((a, b) =>
+        new Date(b.date).getTime() - new Date(a.date).getTime()
+    );
 }
 
 export async function getWeekBySlug(slug: string): Promise<WeekPost | undefined> {
