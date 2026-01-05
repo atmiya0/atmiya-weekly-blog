@@ -36,7 +36,6 @@ export default async function EditPostPage({ params }: EditPostPageProps) {
   const lines = post.content.split("\n");
   const title = lines[0] || "";
   const date = lines[1]?.trim() || "";
-  const summary = lines[2]?.trim() || "";
   // Content starts from line 5 (index 4)
   const bodyContent = lines.slice(4).join("\n").trim();
 

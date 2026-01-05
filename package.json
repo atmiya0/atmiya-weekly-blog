@@ -11,7 +11,6 @@
     "format": "prettier --write .",
     "type-check": "tsc --noEmit",
     "validate": "npm run lint && npm run type-check && npm run build",
-    "new-post": "node scripts/new-post.mjs",
     "prepare": "husky"
   },
   "dependencies": {

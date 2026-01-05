@@ -18,11 +18,11 @@ export default async function AdminLoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background p-4">
+    <div className="flex items-center justify-center min-h-[calc(100vh-4rem)] p-4">
       <div className="w-full max-w-sm">
         <div className="text-center mb-8">
           <h1 className="text-title mb-2">Admin Access</h1>
-          <p className="text-muted-foreground text-sm">Enter your password to continue</p>
+          <p className="text-muted-foreground text-sm">Enter your password to continue.</p>
         </div>
         <LoginForm />
       </div>

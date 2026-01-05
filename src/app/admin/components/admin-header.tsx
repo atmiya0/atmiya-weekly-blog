@@ -35,16 +35,14 @@ export function AdminHeader() {
             </Link>
           </nav>
         </div>
-        <div className="flex items-center gap-4">
-          <Link
-            href="/"
-            className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-            target="_blank"
-          >
-            View Site →
-          </Link>
-          <Button variant="outline" size="sm" onClick={handleLogout}>
+        <div className="flex items-center gap-2">
+          <Button variant="ghost" size="sm" onClick={handleLogout} className="text-destructive hover:bg-destructive/10">
             Logout
+          </Button>
+          <Button variant="outline" size="sm" asChild>
+            <Link href="/" target="_blank">
+              View Site
+            </Link>
           </Button>
         </div>
       </div>

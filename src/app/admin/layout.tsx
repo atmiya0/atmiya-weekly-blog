@@ -3,7 +3,7 @@ import { isAuthenticated } from "@/lib/auth";
 import { AdminHeader } from "./components/admin-header";
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
-  return <div className="min-h-screen bg-background">{children}</div>;
+  return <div className="min-h-screen bg-[#fafafa]">{children}</div>;
 }
 
 // Separate authenticated layout wrapper for dashboard pages
