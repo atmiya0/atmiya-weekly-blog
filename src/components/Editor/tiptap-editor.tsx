@@ -56,12 +56,12 @@ export function TiptapEditor({
 
   if (!editor) {
     return (
-      <div className="border border-border rounded-lg p-4 h-[350px] bg-card animate-pulse" />
+      <div className="border border-border rounded-lg p-4 h-[350px] bg-white animate-pulse" />
     );
   }
 
   return (
-    <div className="border border-border rounded-lg overflow-hidden bg-card">
+    <div className="border border-border rounded-lg overflow-hidden bg-white">
       <EditorToolbar editor={editor} />
       <EditorContent editor={editor} />
     </div>

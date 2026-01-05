@@ -61,11 +61,8 @@ export default async function DashboardPage() {
       <AdminHeader />
       <main className="container mx-auto px-4 py-8 max-w-4xl">
         <div className="flex items-center justify-between mb-6">
-          <h1 className="text-title">Posts</h1>
+          <h1 className="text-title">Total {posts.length} published</h1>
           <div className="flex items-center gap-4">
-            <p className="text-muted-foreground text-sm">
-              {posts.length} post{posts.length !== 1 ? "s" : ""}
-            </p>
             <Link href="/admin/new">
               <Button>New Post</Button>
             </Link>
@@ -99,12 +96,12 @@ export default async function DashboardPage() {
             {years.map((year) => (
               <div key={year}>
                 <h2 className="text-lg font-medium mb-3">{year}</h2>
-                <div className="border border-border rounded-lg overflow-hidden">
+                <div className="border border-border rounded-lg overflow-hidden bg-white">
                   <Table className="table-fixed">
                     <TableHeader>
-                      <TableRow className="bg-muted/50">
-                        <TableHead className="w-[140px]">Date</TableHead>
-                        <TableHead>Title</TableHead>
+                      <TableRow className="bg-[#EBEBEB] hover:bg-[#DEDEDE]">
+                        <TableHead className="w-[140px] font-medium">Date</TableHead>
+                        <TableHead className="font-medium">Title</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
