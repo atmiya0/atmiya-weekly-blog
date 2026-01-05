@@ -175,8 +175,6 @@ src/
     dates.ts                    # Date formatting & ISO week utilities
   types/
     week.ts                     # TypeScript types
-scripts/
-  new-post.mjs                  # CLI tool to create new posts
 ```
 
 ## Hosting & Deployment
@@ -241,8 +239,6 @@ Static generation means every page is pre-rendered at build time. No JavaScript 
 ## Philosophy
 
 This blog is built for simplicity. Writing should be as simple as creating a text file and typing. No complex CMS, no database, no elaborate build processes. Just words and timestamps.
-
-The template file includes a pre-publish checklist to ensure posts are properly formatted before going live. Run `npm run new-post "Your Title" "Your summary"` to auto-generate a correctly formatted file.
 
 ---
 

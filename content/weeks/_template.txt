@@ -1,5 +1,5 @@
 Blog Title
-2025-12-28
+2026-01-12,2026-01-18
 A short summary of what this post is about.
 
 Your content starts here on line 5. 
@@ -7,10 +7,13 @@ You can use plain text or Markdown.
 Double newlines create new paragraphs.
 
 ---
-Tips:
-- Line 1: Title
-- Line 2: Date (YYYY-MM-DD) - Used for sorting and display
+Format Guide:
+- Line 1: Title (required)
+- Line 2: Dates - startDate,endDate (YYYY-MM-DD format, startDate = Monday, endDate = Sunday)
 - Line 3: Summary - Shown on the homepage
 - Line 4: (Leave empty)
 - Line 5+: Content - The main body of your post
-- Filename: Should be YYYY-MM-DD-slug.txt (e.g., 2025-12-28-my-post.txt)
+
+Filename: YYYY-MM-DD-slug.txt (e.g., 2026-01-12-my-post.txt)
+         The date should be the Monday of the week.
+         Place in the correct year folder: content/weeks/YYYY/

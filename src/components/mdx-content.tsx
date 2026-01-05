@@ -61,7 +61,33 @@ function preprocessSource(source: string): string {
   // 9. Strip data attributes (uncommon but could be malicious)
   processed = processed.replace(/\s+data-[a-zA-Z0-9-]+\s*=\s*["'][^"']*["']/gi, "");
 
-  // 10. Ensure there's no leading/trailing script-like content
+  // 10. Convert HTML attributes to JSX-compatible attributes
+  // class -> className
+  processed = processed.replace(/\sclass=/gi, " className=");
+  // for -> htmlFor (for label elements)
+  processed = processed.replace(/\sfor=/gi, " htmlFor=");
+  // tabindex -> tabIndex
+  processed = processed.replace(/\stabindex=/gi, " tabIndex=");
+  // readonly -> readOnly
+  processed = processed.replace(/\sreadonly(?=[>\s])/gi, " readOnly");
+  // maxlength -> maxLength
+  processed = processed.replace(/\smaxlength=/gi, " maxLength=");
+  // minlength -> minLength
+  processed = processed.replace(/\sminlength=/gi, " minLength=");
+  // colspan -> colSpan
+  processed = processed.replace(/\scolspan=/gi, " colSpan=");
+  // rowspan -> rowSpan
+  processed = processed.replace(/\srowspan=/gi, " rowSpan=");
+  // cellpadding -> cellPadding
+  processed = processed.replace(/\scellpadding=/gi, " cellPadding=");
+  // cellspacing -> cellSpacing
+  processed = processed.replace(/\scellspacing=/gi, " cellSpacing=");
+  // autocomplete -> autoComplete
+  processed = processed.replace(/\sautocomplete=/gi, " autoComplete=");
+  // autofocus -> autoFocus
+  processed = processed.replace(/\sautofocus(?=[>\s])/gi, " autoFocus");
+
+  // 11. Ensure there's no leading/trailing script-like content
   processed = processed.trim();
 
   return processed;

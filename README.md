@@ -10,24 +10,29 @@ A minimal, file-based weekly blog built with Next.js, TypeScript, and plain text
 
 **Time required:** Under 1 minute
 
-### Option 1: Automated (Recommended)
+### Option 1: Admin Panel (Recommended)
 
-```bash
-npm run new-post "My Week Title" "A short summary"
-```
+1. Go to `/admin` in your browser
+2. Log in with your credentials
+3. Click "New Post" in the dashboard
+4. Fill in the title, dates, summary, and content
+5. Click "Create Post" — it's automatically saved to GitHub!
 
-This automatically creates a `.txt` file with the correct date in the right folder.
+The admin panel handles proper date formatting, file naming, and GitHub sync.
 
 ### Option 2: Manual
 
-1. Create a new `.txt` file in `content/weeks/` (or a year subfolder)
-2. Write:
+1. Create a new `.txt` file in `content/weeks/YYYY/` (use the correct year folder)
+2. Name it `YYYY-MM-DD-your-slug.txt` where the date is the Monday of the week
+3. Write:
    - **Line 1**: Your title
-   - **Line 2**: A short summary (optional)
-   - **Line 3+**: Your content
-3. Save and push to GitHub
+   - **Line 2**: Dates (startDate,endDate in YYYY-MM-DD format)
+   - **Line 3**: A short summary
+   - **Line 4**: (Leave empty)
+   - **Line 5+**: Your content
+4. Commit and push to GitHub
 
-Example filename: `2026-01-05-my-week.txt` (or just `my-week.txt`)
+Example filename: `2026-01-05-first-week-of-2026.txt`
 
 ### Deploy
 
@@ -111,6 +116,7 @@ Blog posts are written in **plain text** (`.txt` files) for maximum simplicity. 
 
 ```
 Your Blog Title
+2026-01-05,2026-01-11
 A brief summary (optional)
 
 Your content goes here. Write naturally in plain English.
@@ -118,95 +124,64 @@ Your content goes here. Write naturally in plain English.
 You can use Markdown if you want (headings, **bold**, *italic*, etc.)
 But plain text works perfectly fine too!
 ```
-### Field Reference (MDX only)
+
+### Field Reference
 
 | Field | Type | Description |
 |-------|------|-------------|
-| `title` | string | The title of the post |
-| `week` | number | Week number (calculated automatically) |
-| `startDate` | string | Monday of the week (YYYY-MM-DD) |
-| `endDate` | string | Sunday of the week (YYYY-MM-DD) |
-| `summary` | string | Brief summary for listings |
-| `slug` | string | URL-friendly identifier |
+| Line 1 | string | The title of the post |
+| Line 2 | string | Dates: startDate,endDate (YYYY-MM-DD format) |
+| Line 3 | string | Brief summary for listings |
+| Line 5+ | string | Main content (supports Markdown) |
 
-For `.txt` files, all of this is handled automatically.
+For `.txt` files, week numbers and slugs are calculated automatically from the filename.
 
-For backwards compatibility, MDX files with YAML frontmatter still work:
-
-```yaml
----Plain text (`.txt`) and MDX (`.mdx`)
-title: "Your title here"
-week: 2
-startDate: "2024-12-30"
-endDate: "2025-01-05"
-summary: "A brief summary of this week."
-slug: "week-02"
 ---
-```
 
-| Field | Type | Description |
-|-------|------|------------    # Blog posts
+## Project Structure
+
+```
+├── content/
+│   └── weeks/                    # Blog posts
+│       ├── _template.txt         # Template with formatting guide
 │       ├── 2025/
-│       │   ├── 2025-12-22-post.txt   # Plain text posts
-│       │   └── w52-legacy.mdx        # Legacy MDX posts
+│       │   └── 2025-12-22-post.txt
 │       └── 2026/
 │           └── 2026-01-05-post.txt
-├── scripts/
-│   └── new-post.mjs            # CLI tool to create posts
 ├── src/
 │   ├── app/
-│   │   ├── layout.tsx          # Root layout with font config
-│   │   ├── page.tsx            # Home page (indexed)
-│   │   ├── globals.css         # Global styles
-│   │   ├── sitemap.ts          # Only includes home page
-│   │   ├── feed.xml/           # RSS feed
+│   │   ├── layout.tsx            # Root layout with font config
+│   │   ├── page.tsx              # Home page (indexed)
+│   │   ├── globals.css           # Global styles
+│   │   ├── sitemap.ts            # Only includes home page
+│   │   ├── feed.xml/             # RSS feed
+│   │   ├── admin/                # Admin panel for managing posts
+│   │   │   ├── page.tsx          # Admin login
+│   │   │   ├── dashboard/        # Dashboard with all posts
+│   │   │   ├── new/              # Create new post
+│   │   │   └── edit/[slug]/      # Edit existing posts
 │   │   └── week/
-│   │       └── [slug]/         # Blog post pages (noindex)
+│   │       └── [slug]/           # Blog post pages (noindex)
 │   │           └── page.tsx
 │   ├── components/
 │   │   ├── blog-layout.tsx
 │   │   ├── countdown.tsx
+│   │   ├── contact-tray.tsx
 │   │   ├── keyboard-navigation.tsx
 │   │   ├── mdx-content.tsx
 │   │   └── week-navigation.tsx
-│   ├── fonts/                  # Custom font files
+│   ├── fonts/                    # Custom font files
 │   │   └── README.md
 │   ├── lib/
 │   │   ├── dates.ts
-│   │   └── weeks.ts            # Handles both .txt and .mdx
+│   │   ├── github.ts             # GitHub API for CRUD
+│   │   └── weeks.ts              # Handles both .txt and .mdx
 │   └── types/
 │       └── week.ts
 ├── public/
 │   └── robots.txt
-├── README.md                   # This file
-├── README_WRITING.md           # Writing guide
-├── mdx-components.tsx          # MDX component overrides
-│   │   ├── layout.tsx      # Root layout with font config
-│   │   ├── page.tsx        # Home page (indexed)
-│   │   ├── globals.css     # Global styles
-│   │   ├── sitemap.ts      # Only includes home page
-│   │   ├── feed.xml/       # RSS feed
-│   │   └── week/
-│   │       └── [slug]/     # Blog post pages (noindex)
-│   │           └── page.tsx
-│   ├── components/
-│   │   ├── footer.tsx
-│   │   ├── header.tsx
-│   │   ├── mdx-content.tsx
-│   │   ├── theme-provider.tsx
-│   │   ├── theme-toggle.tsx
-│   │   ├── week-card.tsx
-│   │   └── week-navigation.tsx
-│   ├── fonts/              # Custom font files
-│   │   └── README.md
-│   ├── lib/
-│   │   ├── dates.ts
-│   │   └── weeks.ts
-│   └── types/
-│       └── week.ts
-├── public/
-│   └── robots.txt
-├── mdx-components.tsx      # MDX component overrides (shared)
+├── README.md                     # This file
+├── mdx-components.tsx            # MDX component overrides
 ├── next.config.ts
 ├── vercel.json
 └── package.json
@@ -237,7 +212,7 @@ npm run format
 
 ## Deployment
 
-The blog uses static export (`output: 'export'`). Push to `main` branch and Vercel automatically builds and deploys.
+The blog is deployed on Vercel. Push to the `main` branch and Vercel automatically builds and deploys.
 
 ---
 
