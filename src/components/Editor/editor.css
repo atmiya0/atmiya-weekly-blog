@@ -1,7 +1,7 @@
 /* Tiptap Editor Styles */
 
 .tiptap {
-  font-family: var(--font-brunswick, system-ui, sans-serif);
+  font-family: var(--font-openrunde, system-ui, sans-serif);
 }
 
 .tiptap:focus {

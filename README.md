@@ -46,28 +46,16 @@ Vercel handles the rest.
 
 ## Custom Font Setup
 
-The blog is configured to use **BrunswickGrotesque** as the custom font. Until font files are added, it uses a system font fallback.
+The blog is configured to use **OpenRunde** as the custom font. The font file should be placed in `public/font/`.
 
-### Adding Your Font Files
+### Font Files
 
-1. Add your `.woff2` files to `src/fonts/`:
-   ```
-   src/fonts/
-   ├── BrunswickGrotesque-Regular.woff2
-   ├── BrunswickGrotesque-Medium.woff2
-   ├── BrunswickGrotesque-SemiBold.woff2
-   └── BrunswickGrotesque-Bold.woff2
-   ```
+```
+public/font/
+└── OpenRunde-Medium.woff2
+```
 
-2. Open `src/app/layout.tsx` and:
-   - Uncomment the `localFont` import
-   - Uncomment the `brunswickGrotesque` configuration
-   - Update the `<body>` tag:
-     ```tsx
-     <body className={`${brunswickGrotesque.variable} antialiased min-h-screen flex flex-col`}>
-     ```
-
-3. Rebuild and deploy.
+The font is configured in `src/styles/typography.ts` and automatically applied via the `--font-openrunde` CSS variable.
 
 ---
 

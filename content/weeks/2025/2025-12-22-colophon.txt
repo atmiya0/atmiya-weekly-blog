@@ -40,8 +40,8 @@ The contact tray is built with React Portals, ensuring the overlay and modal ele
 
 ### Typography
 
-- **Brunswick Grotesque** — Custom font loaded via `next/font/local`
-- Regular weight only, no stylistic sets enabled
+- **OpenRunde** — Custom font loaded via `next/font/local`
+- Medium weight (500), clean rounded aesthetic
 - 14px base size with 1.571em line height
 - 24px for titles with 1.3em line height
 

@@ -1,17 +1,17 @@
 import localFont from "next/font/local";
 
 // =====================================
-// BRUNSWICK GROTESQUE FONT
+// OPEN RUNDE FONT
 // =====================================
 // Primary typeface for the weekly blog
 // Clean, confident, and readable
 
-export const brunswickGrotesque = localFont({
-  src: "../../public/font/BrunswickGrotesque-Regular.otf",
-  variable: "--font-brunswick",
+export const openRunde = localFont({
+  src: "../../public/font/OpenRunde-Medium.woff2",
+  variable: "--font-openrunde",
   display: "swap",
   preload: true,
-  weight: "400",
+  weight: "500",
   style: "normal",
 });
 
@@ -23,10 +23,10 @@ export const brunswickGrotesque = localFont({
 
 export const textStyles = {
   // Base body text - default readable style
-  body: "font-brunswick text-base leading-relaxed",
+  body: "font-openrunde text-base leading-relaxed",
 } as const;
 
 // CSS variable name for use in Tailwind config or raw CSS
 export const fontVariables = {
-  brunswick: "--font-brunswick",
+  openrunde: "--font-openrunde",
 } as const;

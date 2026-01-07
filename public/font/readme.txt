@@ -1,21 +1,9 @@
-How to use Brunswick Grotesque
-------------------------------
+OpenRunde Font
+--------------
 
-Brunswick Grotesque's texture is enabled through the contextual alternates OpenType feature.
+OpenRunde is a friendly, geometric sans-serif with rounded terminals.
+This blog uses OpenRunde-Medium (weight 500).
 
-Stylistic sets 1–4 (with contextual alternates off) access individual width styles:
+The font is loaded via Next.js `localFont` and applied globally via the `--font-openrunde` CSS variable.
 
-* ss01: condensed
-* ss02: narrow
-* ss03: wide
-* ss04: extended
-* no stylistic set selected: regular
-
-* ss05: text setting (with contextual alternates on)
-  (The text setting is a stylistic set which excludes condensed and extended widths from the mix. This makes the texture more mild and suitable for extended reading).
-
-* discretionary ligatures: when turned on, enables the 'www' ligature.
-
-Some bonus alternates can be accessed manually via the glyphs panel.
-
-Happy typesetting! :–)
+Configuration: src/styles/typography.ts
